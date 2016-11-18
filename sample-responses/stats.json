@@ -1,0 +1,514 @@
+{
+    "username": "Ballsacian1",
+    "stats": {
+        "top_heroes": {
+            "quickplay": [{
+                "hero": "Reinhardt",
+                "played": "27 hours",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000007.png"
+            }, {
+                "hero": "D.Va",
+                "played": "15 hours",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000007A.png"
+            }, {
+                "hero": "Reaper",
+                "played": "13 hours",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000002.png"
+            }, {
+                "hero": "Pharah",
+                "played": "6 hours",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000008.png"
+            }, {
+                "hero": "Torbjörn",
+                "played": "5 hours",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000006.png"
+            }, {
+                "hero": "Bastion",
+                "played": "3 hours",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000015.png"
+            }, {
+                "hero": "Roadhog",
+                "played": "3 hours",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000040.png"
+            }, {
+                "hero": "Mercy",
+                "played": "3 hours",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000004.png"
+            }, {
+                "hero": "Mei",
+                "played": "3 hours",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E00000000000DD.png"
+            }, {
+                "hero": "Junkrat",
+                "played": "3 hours",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000065.png"
+            }, {
+                "hero": "Soldier: 76",
+                "played": "2 hours",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000006E.png"
+            }, {
+                "hero": "Winston",
+                "played": "2 hours",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000009.png"
+            }, {
+                "hero": "Lúcio",
+                "played": "2 hours",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000079.png"
+            }, {
+                "hero": "Zenyatta",
+                "played": "1 hour",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000020.png"
+            }, {
+                "hero": "Widowmaker",
+                "played": "1 hour",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000000A.png"
+            }, {
+                "hero": "Tracer",
+                "played": "1 hour",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000003.png"
+            }, {
+                "hero": "Genji",
+                "played": "1 hour",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000029.png"
+            }, {
+                "hero": "Symmetra",
+                "played": "44 minutes",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000016.png"
+            }, {
+                "hero": "Hanzo",
+                "played": "33 minutes",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000005.png"
+            }, {
+                "hero": "Zarya",
+                "played": "12 minutes",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000068.png"
+            }, {
+                "hero": "McCree",
+                "played": "2 minutes",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000042.png"
+            }, {
+                "hero": "Ana",
+                "played": "1 minute",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000013B.png"
+            }],
+            "competitive": [{
+                "hero": "Reinhardt",
+                "played": "98 hours",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000007.png"
+            }, {
+                "hero": "Soldier: 76",
+                "played": "5 hours",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000006E.png"
+            }, {
+                "hero": "Reaper",
+                "played": "4 hours",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000002.png"
+            }, {
+                "hero": "Mercy",
+                "played": "15 minutes",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000004.png"
+            }, {
+                "hero": "D.Va",
+                "played": "12 minutes",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000007A.png"
+            }, {
+                "hero": "Zenyatta",
+                "played": "12 minutes",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000020.png"
+            }, {
+                "hero": "Roadhog",
+                "played": "7 minutes",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000040.png"
+            }, {
+                "hero": "Bastion",
+                "played": "5 minutes",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000015.png"
+            }, {
+                "hero": "Winston",
+                "played": "4 minutes",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000009.png"
+            }, {
+                "hero": "Lúcio",
+                "played": "2 minutes",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000079.png"
+            }, {
+                "hero": "Junkrat",
+                "played": "2 seconds",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000065.png"
+            }, {
+                "hero": "Tracer",
+                "played": "--",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000003.png"
+            }, {
+                "hero": "Hanzo",
+                "played": "--",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000005.png"
+            }, {
+                "hero": "Torbjörn",
+                "played": "--",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000006.png"
+            }, {
+                "hero": "Pharah",
+                "played": "--",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000008.png"
+            }, {
+                "hero": "Widowmaker",
+                "played": "--",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000000A.png"
+            }, {
+                "hero": "Symmetra",
+                "played": "--",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000016.png"
+            }, {
+                "hero": "Genji",
+                "played": "--",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000029.png"
+            }, {
+                "hero": "McCree",
+                "played": "--",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000042.png"
+            }, {
+                "hero": "Zarya",
+                "played": "--",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000068.png"
+            }, {
+                "hero": "Mei",
+                "played": "--",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E00000000000DD.png"
+            }, {
+                "hero": "Ana",
+                "played": "--",
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000013B.png"
+            }]
+        },
+        "combat": {
+            "quickplay": [{
+                "title": "Melee Final Blows",
+                "value": "48"
+            }, {
+                "title": "Solo Kills",
+                "value": "1,528"
+            }, {
+                "title": "Objective Kills",
+                "value": "4,082"
+            }, {
+                "title": "Final Blows",
+                "value": "5,069"
+            }, {
+                "title": "Damage Done",
+                "value": "3,554,936"
+            }, {
+                "title": "Eliminations",
+                "value": "9,246"
+            }, {
+                "title": "Environmental Kills",
+                "value": "54"
+            }, {
+                "title": "Multikills",
+                "value": "75"
+            }],
+            "competitive": [{
+                "title": "Melee Final Blows",
+                "value": "14"
+            }, {
+                "title": "Solo Kills",
+                "value": "828"
+            }, {
+                "title": "Objective Kills",
+                "value": "5,315"
+            }, {
+                "title": "Final Blows",
+                "value": "5,874"
+            }, {
+                "title": "Damage Done",
+                "value": "5,160,376"
+            }, {
+                "title": "Eliminations",
+                "value": "11,034"
+            }, {
+                "title": "Environmental Kills",
+                "value": "65"
+            }, {
+                "title": "Multikills",
+                "value": "126"
+            }]
+        },
+        "deaths": {
+            "quickplay": [{
+                "title": "Deaths",
+                "value": "5,507"
+            }, {
+                "title": "Environmental Deaths",
+                "value": "121"
+            }],
+            "competitive": [{
+                "title": "Deaths",
+                "value": "5,967"
+            }, {
+                "title": "Environmental Deaths",
+                "value": "169"
+            }]
+        },
+        "match_awards": {
+            "quickplay": [{
+                "title": "Cards",
+                "value": "276"
+            }, {
+                "title": "Medals",
+                "value": "2,281"
+            }, {
+                "title": "Medals - Gold",
+                "value": "851"
+            }, {
+                "title": "Medals - Silver",
+                "value": "786"
+            }, {
+                "title": "Medals - Bronze",
+                "value": "644"
+            }],
+            "competitive": [{
+                "title": "Cards",
+                "value": "191"
+            }, {
+                "title": "Medals",
+                "value": "1,298"
+            }, {
+                "title": "Medals - Gold",
+                "value": "453"
+            }, {
+                "title": "Medals - Silver",
+                "value": "405"
+            }, {
+                "title": "Medals - Bronze",
+                "value": "440"
+            }]
+        },
+        "assists": {
+            "quickplay": [{
+                "title": "Recon Assists",
+                "value": "8"
+            }, {
+                "title": "Healing Done",
+                "value": "394,714"
+            }, {
+                "title": "Teleporter Pads Destroyed",
+                "value": "11"
+            }],
+            "competitive": [{
+                "title": "Healing Done",
+                "value": "113,462"
+            }, {
+                "title": "Teleporter Pad Destroyed",
+                "value": "1"
+            }]
+        },
+        "average": {
+            "quickplay": [{
+                "title": "Melee Final Blows - Average",
+                "value": "0.06"
+            }, {
+                "title": "Time Spent on Fire - Average",
+                "value": "00:49"
+            }, {
+                "title": "Solo Kills - Average",
+                "value": "2"
+            }, {
+                "title": "Objective Time - Average",
+                "value": "00:53"
+            }, {
+                "title": "Objective Kills - Average",
+                "value": "5.34"
+            }, {
+                "title": "Healing Done - Average",
+                "value": "517"
+            }, {
+                "title": "Final Blows - Average",
+                "value": "6.64"
+            }, {
+                "title": "Deaths - Average",
+                "value": "7.21"
+            }, {
+                "title": "Damage Done - Average",
+                "value": "4,659"
+            }, {
+                "title": "Eliminations - Average",
+                "value": "12.11"
+            }],
+            "competitive": [{
+                "title": "Melee Final Blows - Average",
+                "value": "0.02"
+            }, {
+                "title": "Time Spent on Fire - Average",
+                "value": "01:49"
+            }, {
+                "title": "Solo Kills - Average",
+                "value": "1.65"
+            }, {
+                "title": "Objective Time - Average",
+                "value": "02:14"
+            }, {
+                "title": "Objective Kills - Average",
+                "value": "10.65"
+            }, {
+                "title": "Healing Done - Average",
+                "value": "227"
+            }, {
+                "title": "Final Blows - Average",
+                "value": "11.77"
+            }, {
+                "title": "Deaths - Average",
+                "value": "11.95"
+            }, {
+                "title": "Damage Done - Average",
+                "value": "10,341"
+            }, {
+                "title": "Eliminations - Average",
+                "value": "22.11"
+            }]
+        },
+        "miscellaneous": {
+            "quickplay": [{
+                "title": "Melee Final Blows - Most in Game",
+                "value": "2"
+            }, {
+                "title": "Recon Assists - Average",
+                "value": "0"
+            }, {
+                "title": "Defensive Assists",
+                "value": "276"
+            }, {
+                "title": "Defensive Assists - Average",
+                "value": "0"
+            }, {
+                "title": "Offensive Assists",
+                "value": "60"
+            }, {
+                "title": "Offensive Assists - Average",
+                "value": "0"
+            }],
+            "competitive": [{
+                "title": "Melee Final Blows - Most in Game",
+                "value": "3"
+            }, {
+                "title": "Games Tied",
+                "value": "36"
+            }, {
+                "title": "Games Lost",
+                "value": "213"
+            }, {
+                "title": "Defensive Assists",
+                "value": "34"
+            }, {
+                "title": "Defensive Assists - Average",
+                "value": "0"
+            }, {
+                "title": "Offensive Assists",
+                "value": "16"
+            }, {
+                "title": "Offensive Assists - Average",
+                "value": "0"
+            }]
+        },
+        "best": {
+            "quickplay": [{
+                "title": "Eliminations - Most in Game",
+                "value": "45"
+            }, {
+                "title": "Final Blows - Most in Game",
+                "value": "30"
+            }, {
+                "title": "Damage Done - Most in Game",
+                "value": "18,625"
+            }, {
+                "title": "Healing Done - Most in Game",
+                "value": "7,670"
+            }, {
+                "title": "Defensive Assists - Most in Game",
+                "value": "15"
+            }, {
+                "title": "Offensive Assists - Most in Game",
+                "value": "7"
+            }, {
+                "title": "Objective Kills - Most in Game",
+                "value": "33"
+            }, {
+                "title": "Objective Time - Most in Game",
+                "value": "04:32"
+            }, {
+                "title": "Multikill - Best",
+                "value": "5"
+            }, {
+                "title": "Solo Kills - Most in Game",
+                "value": "30"
+            }, {
+                "title": "Time Spent on Fire - Most in Game",
+                "value": "09:14"
+            }],
+            "competitive": [{
+                "title": "Eliminations - Most in Game",
+                "value": "59"
+            }, {
+                "title": "Final Blows - Most in Game",
+                "value": "38"
+            }, {
+                "title": "Damage Done - Most in Game",
+                "value": "33,092"
+            }, {
+                "title": "Healing Done - Most in Game",
+                "value": "8,191"
+            }, {
+                "title": "Defensive Assists - Most in Game",
+                "value": "14"
+            }, {
+                "title": "Offensive Assists - Most in Game",
+                "value": "6"
+            }, {
+                "title": "Objective Kills - Most in Game",
+                "value": "43"
+            }, {
+                "title": "Objective Time - Most in Game",
+                "value": "07:45"
+            }, {
+                "title": "Multikill - Best",
+                "value": "5"
+            }, {
+                "title": "Solo Kills - Most in Game",
+                "value": "38"
+            }, {
+                "title": "Time Spent on Fire - Most in Game",
+                "value": "10:51"
+            }]
+        },
+        "game": {
+            "quickplay": [{
+                "title": "Games Won",
+                "value": "390"
+            }, {
+                "title": "Time Spent on Fire",
+                "value": "10:31:39"
+            }, {
+                "title": "Objective Time",
+                "value": "11:17:20"
+            }, {
+                "title": "Time Played",
+                "value": "98 hours"
+            }],
+            "competitive": [{
+                "title": "Games Played",
+                "value": "499"
+            }, {
+                "title": "Games Won",
+                "value": "250"
+            }, {
+                "title": "Time Spent on Fire",
+                "value": "15:12:12"
+            }, {
+                "title": "Objective Time",
+                "value": "18:42:16"
+            }, {
+                "title": "Time Played",
+                "value": "110 hours"
+            }]
+        }
+    }
+}

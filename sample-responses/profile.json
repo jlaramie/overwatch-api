@@ -1,0 +1,25 @@
+{
+    "username": "Ballsacian1",
+    "games": {
+        "quickplay": {
+            "wins": "390"
+        },
+        "competitive": {
+            "wins": "250",
+            "lost": "213",
+            "played": "499",
+            "tied": "36",
+            "winPercentage": 50.1002004008016
+        }
+    },
+    "playtime": {
+        "quickplay": "98 hours",
+        "competitive": "110 hours"
+    },
+    "competitive": {
+        "rank": "3000",
+        "rank_img": "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-5.png"
+    },
+    "levelFrame": "https://blzgdapipro-a.akamaihd.net/game/playerlevelrewards/0x0250000000000934_Border.png",
+    "star": "https://blzgdapipro-a.akamaihd.net/game/playerlevelrewards/0x0250000000000934_Rank.png"
+}
