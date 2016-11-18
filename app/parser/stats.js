@@ -1,108 +1,166 @@
 const cheerio = require('cheerio');
 const rp = require('request-promise');
 const Promise = require('promise');
+const trim = require('trim');
+const moment = require('moment');
+
+function toCamelCase(str) {
+    return str
+        .replace(/-/g, ' ')
+        .replace(/\s(.)/g, function($1) {
+            return $1.toUpperCase();
+        })
+        .replace(/\s/g, '')
+        .replace(/^(.)/, function($1) {
+            return $1.toLowerCase();
+        });
+}
 
 // export default function(platform, region, tag, cb) {
 module.exports = function(platform, region, tag, cb) {
 
-  const url = platform === 'psn' || platform === 'xbl' ? `https://playoverwatch.com/en-us/career/${platform}/${tag}` : `https://playoverwatch.com/en-us/career/${platform}/${region}/${tag}`;
-  const promise = new Promise(function(resolve, reject) {
-    rp(url).then((htmlString) => {
+    const url = platform === 'psn' || platform === 'xbl' ? `https://playoverwatch.com/en-us/career/${platform}/${tag}` : `https://playoverwatch.com/en-us/career/${platform}/${region}/${tag}`;
+    const sortBy = 'all';
+    const promise = new Promise(function(resolve, reject) {
+        rp(url).then((htmlString) => {
+            try {
+                // Begin html parsing.
+                const $ = cheerio.load(htmlString);
+                const user = $('.header-masthead').text();
 
-      // Begin html parsing.
-      const $ = cheerio.load(htmlString);
-      const user = $('.header-masthead').text();
+                const stats = {
+                    top_heroes: {}
+                };
 
-      const stats = {};
+                const availableHeroStats = {
+                    competitive: [],
+                    quickplay: []
+                };
 
-      //
-      // Top Heroes.
-      //
+                const statsByHeroes = {
+                    competitive: {},
+                    quickplay: {},
+                };
 
-      // Quickplay.
-      const quickplayTopHeroesEls = $('#quickplay [data-category-id="overwatch.guid.0x0860000000000021"]')
-        .find('.progress-category-item');
-      let quickplayTopHeroes = [];
-      quickplayTopHeroesEls.each(function(i, el) {
-        const stat = {};
-        stat.hero = $(this).find('.title').text();
-        stat.played = $(this).find('.description').text();
-        stat.img = $(this).find('img').attr('src');
-        quickplayTopHeroes.push(stat);
-      });
-      stats['top_heroes'] = { quickplay: [] };
-      stats['top_heroes']['quickplay'] = quickplayTopHeroes;
+                // Get all the availble stats, their names, and guid
+                Object.keys(availableHeroStats).forEach(function(mode) {
+                    const statsForMode = availableHeroStats[mode];
+                    const availableStats = $(`#${mode} [data-group-id="comparisons"] option`);
 
-      // Competitive.
-      const compTopHeroesEls = $('#competitive [data-category-id="overwatch.guid.0x0860000000000021"]')
-        .find('.progress-category-item');
-      let compTopHeroes = [];
-      compTopHeroesEls.each(function(i, el) {
-        const stat = {};
-        stat.hero = $(this).find('.title').text();
-        stat.played = $(this).find('.description').text();
-        stat.img = $(this).find('img').attr('src');
-        compTopHeroes.push(stat);
-      });
-      stats['top_heroes']['competitive'] = [];
-      stats['top_heroes']['competitive'] = compTopHeroes;
+                    availableStats.each(function(i, el) {
+                        var stat = {};
 
-      //
-      // Career Stats
-      //
-      const statCategories = [
-        'Combat',
-        'Deaths',
-        'Match Awards',
-        'Assists',
-        'Average',
-        'Miscellaneous',
-        'Best',
-        'Game'
-      ];
+                        stat.name = $(this).attr('option-id');
+                        stat.id = $(this).attr('value');
+                        stat.key = toCamelCase(stat.name);
 
-      // Quickplay Stats.
-      statCategories.forEach(function(item) {
-        const els = $(`#quickplay [data-category-id="0x02E00000FFFFFFFF"] span:contains("${item}")`).closest('table').find('tbody tr');
-        let statsArr = [];
-        els.each(function(i, el) {
-          let stat = {};
-          stat.title = $(this).find('td').first().text();
-          stat.value = $(this).find('td').next().text();
-          statsArr.push(stat);
+                        statsForMode.push(stat);
+                    });
+                });
+
+                // Iterate over stats for a given mode and populate stats data
+                function populateTopHeroStats(mode) {
+                    var topHeroStats = {};
+
+                    stats.top_heroes[mode] = [];
+
+                    availableHeroStats[mode].forEach(function(statInfo) {
+                        const heroEls = $(`#${mode} [data-category-id="${statInfo.id}"]`).find('.progress-category-item');
+
+                        heroEls.each(function(i, el) {
+                            const heroName = $(this).find('.title').text();
+                            const stat = statsByHeroes[mode][heroName] = statsByHeroes[mode][heroName] || {};
+                            const value = trim($(this).find('.description').text());
+
+                            stat.hero = $(this).find('.title').text();
+                            stat.img = $(this).find('img').attr('src');
+
+                            switch (statInfo.key) {
+                                case 'timePlayed':
+                                    const valueSplit = value.split(' ');
+                                    stat[statInfo.key] = value === '--' ? 0 : moment.duration(parseInt(valueSplit[0]), valueSplit[1].toLowerCase()).asHours();
+                                    break;
+                                case 'weaponAccuracy':
+                                    stat[statInfo.key] = parseInt(value.replace('%', ''), 10);
+                                    break;
+                                default:
+                                    stat[statInfo.key] = parseInt(value, 10);
+                                    break;
+                            }
+
+                            if (stats['top_heroes'][mode].indexOf(stat) === -1) {
+                                stats['top_heroes'][mode].push(stat);
+                            }
+                        });
+                    });
+                }
+
+                // 
+                // Top Heroes.
+                // 
+                populateTopHeroStats('quickplay');
+                populateTopHeroStats('competitive');
+
+                //
+                // Career Stats
+                //
+                const statCategories = [
+                    'Combat',
+                    'Deaths',
+                    'Match Awards',
+                    'Assists',
+                    'Average',
+                    'Miscellaneous',
+                    'Best',
+                    'Game'
+                ];
+
+                // Quickplay Stats.
+                statCategories.forEach(function(item) {
+                    const els = $(`#quickplay [data-category-id="0x02E00000FFFFFFFF"] span:contains("${item}")`).closest('table').find('tbody tr');
+                    let statsArr = [];
+                    els.each(function(i, el) {
+                        let stat = {};
+                        stat.title = $(this).find('td').first().text();
+                        stat.value = $(this).find('td').next().text();
+                        statsArr.push(stat);
+                    });
+                    item = item.replace(' ', '_').toLowerCase();
+                    stats[item] = { quickplay: [] };
+                    stats[item]['quickplay'] = statsArr;
+                });
+
+                // Competitive Stats.
+                statCategories.forEach(function(item) {
+                    const els = $(`#competitive [data-category-id="0x02E00000FFFFFFFF"] span:contains("${item}")`).closest('table').find('tbody tr');
+                    let statsArr = [];
+                    els.each(function(i, el) {
+                        let stat = {};
+                        stat.title = $(this).find('td').first().text();
+                        stat.value = $(this).find('td').next().text();
+                        statsArr.push(stat);
+                    });
+                    item = item.replace(' ', '_').toLowerCase();
+                    stats[item]['competitive'] = [];
+                    stats[item]['competitive'] = statsArr;
+                });
+
+                const json = {
+                    username: user,
+                    stats: stats
+                }
+
+                cb && cb(null, json);
+                resolve(json);
+            } catch (e) {
+                console.log(e);
+                reject(e);
+            }
+        }).catch(err => {
+            cb && cb(err);
+            reject(err);
         });
-        item = item.replace(' ', '_').toLowerCase();
-        stats[item] = { quickplay: [] };
-        stats[item]['quickplay'] = statsArr;
-      });
-
-      // Competitive Stats.
-      statCategories.forEach(function(item) {
-        const els = $(`#competitive [data-category-id="0x02E00000FFFFFFFF"] span:contains("${item}")`).closest('table').find('tbody tr');
-        let statsArr = [];
-        els.each(function(i, el) {
-          let stat = {};
-          stat.title = $(this).find('td').first().text();
-          stat.value = $(this).find('td').next().text();
-          statsArr.push(stat);
-        });
-        item = item.replace(' ', '_').toLowerCase();
-        stats[item]['competitive'] = [];
-        stats[item]['competitive'] = statsArr;
-      });
-
-      const json = {
-        username: user,
-        stats: stats
-      }
-
-      cb && cb(null, json);
-      resolve(json);
-    }).catch(err => {
-      cb && cb(err);
-      reject(err);
     });
-  });
 
-  return promise;
+    return promise;
 }

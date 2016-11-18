@@ -1,0 +1,56 @@
+{
+    "competitive": [{
+        "name": "Time Played",
+        "id": "overwatch.guid.0x0860000000000021",
+        "key": "timePlayed"
+    }, {
+        "name": "Games Won",
+        "id": "overwatch.guid.0x0860000000000039",
+        "key": "gamesWon"
+    }, {
+        "name": "Win Percentage",
+        "id": "overwatch.guid.0x08600000000003D1",
+        "key": "winPercentage"
+    }, {
+        "name": "Weapon Accuracy",
+        "id": "overwatch.guid.0x086000000000002F",
+        "key": "weaponAccuracy"
+    }, {
+        "name": "Eliminations per Life",
+        "id": "overwatch.guid.0x08600000000003D2",
+        "key": "eliminationsPerLife"
+    }, {
+        "name": "Multikill - Best",
+        "id": "overwatch.guid.0x0860000000000346",
+        "key": "multikillBest"
+    }, {
+        "name": "Objective Kills - Average",
+        "id": "overwatch.guid.0x086000000000039C",
+        "key": "objectiveKillsAverage"
+    }],
+    "quickplay": [{
+        "name": "Time Played",
+        "id": "overwatch.guid.0x0860000000000021",
+        "key": "timePlayed"
+    }, {
+        "name": "Games Won",
+        "id": "overwatch.guid.0x0860000000000039",
+        "key": "gamesWon"
+    }, {
+        "name": "Weapon Accuracy",
+        "id": "overwatch.guid.0x086000000000002F",
+        "key": "weaponAccuracy"
+    }, {
+        "name": "Eliminations per Life",
+        "id": "overwatch.guid.0x08600000000003D2",
+        "key": "eliminationsPerLife"
+    }, {
+        "name": "Multikill - Best",
+        "id": "overwatch.guid.0x0860000000000346",
+        "key": "multikillBest"
+    }, {
+        "name": "Objective Kills - Average",
+        "id": "overwatch.guid.0x086000000000039C",
+        "key": "objectiveKillsAverage"
+    }]
+}

@@ -9,11 +9,13 @@
   "dependencies": {
     "cheerio": "^0.22.0",
     "eslint": "^3.4.0",
+    "moment": "^2.16.0",
     "node-cache": "^3.2.1",
     "promise": "^7.1.1",
     "request": "^2.74.0",
     "request-promise": "^4.1.1",
-    "srv-cli": "^0.3.3"
+    "srv-cli": "^0.3.3",
+    "trim": "0.0.1"
   },
   "devDependencies": {},
   "scripts": {
