@@ -1,6 +1,7 @@
 const cheerio = require('cheerio');
 const rp = require('request-promise');
 const Promise = require('promise');
+const Utilities = require('../utilities');
 
 // export default function(platform, region, tag, cb) {
 module.exports = function(platform, region, tag, cb) {
@@ -13,6 +14,8 @@ module.exports = function(platform, region, tag, cb) {
                 // Begin html parsing.
                 const $ = cheerio.load(htmlString);
                 const user = $('.header-masthead').text();
+                const avatar = $('.player-portrait').attr('src');
+                const playerLevel = parseInt($('.player-level .u-vertical-center').first().text(), 10);
                 const won = {};
                 const lost = {};
                 const played = {};
@@ -22,6 +25,7 @@ module.exports = function(platform, region, tag, cb) {
                 let compRank;
                 let compRankImg;
                 let star = '';
+                let playerPrestige = 0;
 
                 const quickplayWonEl = $('#quickplay td:contains("Games Won")').next().html();
                 const quickplayPlayedEl = $('#quickplay td:contains("Games Played")').next().html();
@@ -78,10 +82,12 @@ module.exports = function(platform, region, tag, cb) {
 
                 if (starEl !== null) {
                     star = $('.player-level .player-rank').attr('style').slice(21, 107);
+                    playerPrestige = Utilities.getPrestige(star.match(/0x([0-9a-f]*)/)[0]);
                 }
 
                 const json = {
                     username: user,
+                    avatar: avatar,
                     games: {
                         quickplay: { wins: won.quickplay, lost: lost.quickplay, played: played.quickplay },
                         competitive: {
@@ -94,6 +100,9 @@ module.exports = function(platform, region, tag, cb) {
                     },
                     playtime: { quickplay: time.quickplay, competitive: time.competitive },
                     competitive: { rank: compRank, rank_img: compRankImg },
+                    level: playerLevel,
+                    prestige: playerPrestige,
+                    levelFull: (playerPrestige * 100) + playerLevel,
                     levelFrame: levelFrame,
                     star: star
                 }

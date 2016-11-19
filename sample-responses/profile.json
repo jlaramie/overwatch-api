@@ -1,5 +1,6 @@
 {
     "username": "Ballsacian1",
+    "avatar": "https://blzgdapipro-a.akamaihd.net/game/unlocks/0x02500000000006CF.png",
     "games": {
         "quickplay": {
             "wins": "390"
@@ -20,6 +21,9 @@
         "rank": "3000",
         "rank_img": "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-5.png"
     },
+    "level": 29,
+    "prestige": 3,
+    "levelFull": 329,
     "levelFrame": "https://blzgdapipro-a.akamaihd.net/game/playerlevelrewards/0x0250000000000934_Border.png",
     "star": "https://blzgdapipro-a.akamaihd.net/game/playerlevelrewards/0x0250000000000934_Rank.png"
 }
