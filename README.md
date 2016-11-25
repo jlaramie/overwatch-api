@@ -84,3 +84,9 @@ See [srv](https://github.com/alfg/srv) documentation for more info on srv specif
 
 ## License
 MIT
+
+
+https://playoverwatch.com/en-us/career/get-platforms/53800040
+
+</script><script type="text/template" id="platform-btn-template"><a href="<%= careerLink %>" class="button m-white m-sm <%= classes %>"><%= platformName %></a></script><script>window.app.career.init(53800040, 'psn', 'global');
+

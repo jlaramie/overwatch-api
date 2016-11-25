@@ -4,181 +4,423 @@
         "top_heroes": {
             "quickplay": [{
                 "hero": "Reinhardt",
-                "played": "27 hours",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000007.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000007.png",
+                "timePlayed": 27,
+                "gamesWon": 113,
+                "weaponAccuracy": 0,
+                "eliminationsPerLife": 1,
+                "multikillBest": 4,
+                "objectiveKillsAverage": 4
             }, {
                 "hero": "D.Va",
-                "played": "15 hours",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000007A.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000007A.png",
+                "timePlayed": 15,
+                "gamesWon": 59,
+                "weaponAccuracy": 26,
+                "eliminationsPerLife": 2,
+                "multikillBest": 5,
+                "objectiveKillsAverage": 5
             }, {
                 "hero": "Reaper",
-                "played": "13 hours",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000002.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000002.png",
+                "timePlayed": 13,
+                "gamesWon": 56,
+                "weaponAccuracy": 27,
+                "eliminationsPerLife": 2,
+                "multikillBest": 4,
+                "objectiveKillsAverage": 9
             }, {
                 "hero": "Pharah",
-                "played": "6 hours",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000008.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000008.png",
+                "timePlayed": 6,
+                "gamesWon": 22,
+                "weaponAccuracy": 40,
+                "eliminationsPerLife": 1,
+                "multikillBest": 3,
+                "objectiveKillsAverage": 5
             }, {
                 "hero": "Torbjörn",
-                "played": "5 hours",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000006.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000006.png",
+                "timePlayed": 5,
+                "gamesWon": 23,
+                "weaponAccuracy": 29,
+                "eliminationsPerLife": 2,
+                "multikillBest": 3,
+                "objectiveKillsAverage": 5
             }, {
                 "hero": "Bastion",
-                "played": "3 hours",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000015.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000015.png",
+                "timePlayed": 3,
+                "gamesWon": 18,
+                "weaponAccuracy": 20,
+                "eliminationsPerLife": 1,
+                "multikillBest": 3,
+                "objectiveKillsAverage": 5
             }, {
                 "hero": "Roadhog",
-                "played": "3 hours",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000040.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000040.png",
+                "timePlayed": 3,
+                "gamesWon": 15,
+                "weaponAccuracy": 27,
+                "eliminationsPerLife": 1,
+                "multikillBest": 3,
+                "objectiveKillsAverage": 3
             }, {
                 "hero": "Mercy",
-                "played": "3 hours",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000004.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000004.png",
+                "timePlayed": 3,
+                "gamesWon": 14,
+                "weaponAccuracy": 28,
+                "eliminationsPerLife": 0,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 1
             }, {
                 "hero": "Mei",
-                "played": "3 hours",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E00000000000DD.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E00000000000DD.png",
+                "timePlayed": 3,
+                "gamesWon": 14,
+                "weaponAccuracy": 36,
+                "eliminationsPerLife": 1,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 4
             }, {
                 "hero": "Junkrat",
-                "played": "3 hours",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000065.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000065.png",
+                "timePlayed": 3,
+                "gamesWon": 10,
+                "weaponAccuracy": 22,
+                "eliminationsPerLife": 2,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 7
             }, {
                 "hero": "Soldier: 76",
-                "played": "2 hours",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000006E.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000006E.png",
+                "timePlayed": 2,
+                "gamesWon": 8,
+                "weaponAccuracy": 31,
+                "eliminationsPerLife": 1,
+                "multikillBest": 3,
+                "objectiveKillsAverage": 4
             }, {
                 "hero": "Winston",
-                "played": "2 hours",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000009.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000009.png",
+                "timePlayed": 2,
+                "gamesWon": 3,
+                "weaponAccuracy": 0,
+                "eliminationsPerLife": 1,
+                "multikillBest": 3,
+                "objectiveKillsAverage": 6
             }, {
                 "hero": "Lúcio",
-                "played": "2 hours",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000079.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000079.png",
+                "timePlayed": 2,
+                "gamesWon": 7,
+                "weaponAccuracy": 24,
+                "eliminationsPerLife": 1,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 4
             }, {
                 "hero": "Zenyatta",
-                "played": "1 hour",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000020.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000020.png",
+                "timePlayed": 1,
+                "gamesWon": 4,
+                "weaponAccuracy": 24,
+                "eliminationsPerLife": 1,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 2
             }, {
                 "hero": "Widowmaker",
-                "played": "1 hour",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000000A.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000000A.png",
+                "timePlayed": 1,
+                "gamesWon": 6,
+                "weaponAccuracy": 28,
+                "eliminationsPerLife": 1,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 2
             }, {
                 "hero": "Tracer",
-                "played": "1 hour",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000003.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000003.png",
+                "timePlayed": 1,
+                "gamesWon": 4,
+                "weaponAccuracy": 33,
+                "eliminationsPerLife": 1,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 4
             }, {
                 "hero": "Genji",
-                "played": "1 hour",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000029.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000029.png",
+                "timePlayed": 1,
+                "gamesWon": 4,
+                "weaponAccuracy": 29,
+                "eliminationsPerLife": 1,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 4
             }, {
                 "hero": "Symmetra",
-                "played": "44 minutes",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000016.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000016.png",
+                "timePlayed": 0.7333333333333333,
+                "gamesWon": 2,
+                "weaponAccuracy": 0,
+                "eliminationsPerLife": 0,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 2
             }, {
                 "hero": "Hanzo",
-                "played": "33 minutes",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000005.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000005.png",
+                "timePlayed": 0.55,
+                "gamesWon": 3,
+                "weaponAccuracy": 22,
+                "eliminationsPerLife": 1,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 1
             }, {
                 "hero": "Zarya",
-                "played": "12 minutes",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000068.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000068.png",
+                "timePlayed": 0.2,
+                "gamesWon": 2,
+                "weaponAccuracy": 44,
+                "eliminationsPerLife": 2,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 3
             }, {
                 "hero": "McCree",
-                "played": "2 minutes",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000042.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000042.png",
+                "timePlayed": 0.03333333333333333,
+                "gamesWon": 1,
+                "weaponAccuracy": 17,
+                "eliminationsPerLife": 0,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 0
             }, {
                 "hero": "Ana",
-                "played": "1 minute",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000013B.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000013B.png",
+                "timePlayed": 0.016666666666666666,
+                "gamesWon": 0,
+                "weaponAccuracy": 16,
+                "eliminationsPerLife": 0,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 0
             }],
             "competitive": [{
                 "hero": "Reinhardt",
-                "played": "98 hours",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000007.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000007.png",
+                "timePlayed": 98,
+                "gamesWon": 227,
+                "winPercentage": 50,
+                "weaponAccuracy": 0,
+                "eliminationsPerLife": 1,
+                "multikillBest": 5,
+                "objectiveKillsAverage": 10
             }, {
                 "hero": "Soldier: 76",
-                "played": "5 hours",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000006E.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000006E.png",
+                "timePlayed": 5,
+                "gamesWon": 13,
+                "winPercentage": 46,
+                "weaponAccuracy": 36,
+                "eliminationsPerLife": 1,
+                "multikillBest": 4,
+                "objectiveKillsAverage": 14
             }, {
                 "hero": "Reaper",
-                "played": "4 hours",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000002.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000002.png",
+                "timePlayed": 4,
+                "gamesWon": 10,
+                "winPercentage": 45,
+                "weaponAccuracy": 25,
+                "eliminationsPerLife": 2,
+                "multikillBest": 4,
+                "objectiveKillsAverage": 17
             }, {
                 "hero": "Mercy",
-                "played": "15 minutes",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000004.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000004.png",
+                "timePlayed": 0.25,
+                "gamesWon": 0,
+                "winPercentage": 0,
+                "weaponAccuracy": 33,
+                "eliminationsPerLife": 0,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 1
             }, {
                 "hero": "D.Va",
-                "played": "12 minutes",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000007A.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000007A.png",
+                "timePlayed": 0.2,
+                "gamesWon": 0,
+                "winPercentage": 5,
+                "weaponAccuracy": 40,
+                "eliminationsPerLife": 1,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 5
             }, {
                 "hero": "Zenyatta",
-                "played": "12 minutes",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000020.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000020.png",
+                "timePlayed": 0.2,
+                "gamesWon": 0,
+                "winPercentage": 0,
+                "weaponAccuracy": 27,
+                "eliminationsPerLife": 0,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 1
             }, {
                 "hero": "Roadhog",
-                "played": "7 minutes",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000040.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000040.png",
+                "timePlayed": 0.11666666666666667,
+                "gamesWon": 0,
+                "winPercentage": 99,
+                "weaponAccuracy": 34,
+                "eliminationsPerLife": 1,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 5
             }, {
                 "hero": "Bastion",
-                "played": "5 minutes",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000015.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000015.png",
+                "timePlayed": 0.08333333333333333,
+                "gamesWon": 0,
+                "winPercentage": 0,
+                "weaponAccuracy": 17,
+                "eliminationsPerLife": 1,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 2
             }, {
                 "hero": "Winston",
-                "played": "4 minutes",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000009.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000009.png",
+                "timePlayed": 0.06666666666666667,
+                "gamesWon": 0,
+                "winPercentage": 0,
+                "weaponAccuracy": 0,
+                "eliminationsPerLife": 0,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 7
             }, {
                 "hero": "Lúcio",
-                "played": "2 minutes",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000079.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000079.png",
+                "timePlayed": 0.03333333333333333,
+                "gamesWon": 0,
+                "winPercentage": 0,
+                "weaponAccuracy": 38,
+                "eliminationsPerLife": 0,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 0
             }, {
                 "hero": "Junkrat",
-                "played": "2 seconds",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000065.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000065.png",
+                "timePlayed": 0.0005555555555555556,
+                "gamesWon": 0,
+                "winPercentage": 0,
+                "weaponAccuracy": 0,
+                "eliminationsPerLife": 0,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 0
             }, {
                 "hero": "Tracer",
-                "played": "--",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000003.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000003.png",
+                "timePlayed": 0,
+                "gamesWon": 0,
+                "winPercentage": 0,
+                "weaponAccuracy": 0,
+                "eliminationsPerLife": 0,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 0
             }, {
                 "hero": "Hanzo",
-                "played": "--",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000005.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000005.png",
+                "timePlayed": 0,
+                "gamesWon": 0,
+                "winPercentage": 0,
+                "weaponAccuracy": 0,
+                "eliminationsPerLife": 0,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 0
             }, {
                 "hero": "Torbjörn",
-                "played": "--",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000006.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000006.png",
+                "timePlayed": 0,
+                "gamesWon": 0,
+                "winPercentage": 0,
+                "weaponAccuracy": 0,
+                "eliminationsPerLife": 0,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 0
             }, {
                 "hero": "Pharah",
-                "played": "--",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000008.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000008.png",
+                "timePlayed": 0,
+                "gamesWon": 0,
+                "winPercentage": 0,
+                "weaponAccuracy": 0,
+                "eliminationsPerLife": 0,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 0
             }, {
                 "hero": "Widowmaker",
-                "played": "--",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000000A.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000000A.png",
+                "timePlayed": 0,
+                "gamesWon": 0,
+                "winPercentage": 0,
+                "weaponAccuracy": 0,
+                "eliminationsPerLife": 0,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 0
             }, {
                 "hero": "Symmetra",
-                "played": "--",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000016.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000016.png",
+                "timePlayed": 0,
+                "gamesWon": 0,
+                "winPercentage": 0,
+                "weaponAccuracy": 0,
+                "eliminationsPerLife": 0,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 0
             }, {
                 "hero": "Genji",
-                "played": "--",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000029.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000029.png",
+                "timePlayed": 0,
+                "gamesWon": 0,
+                "winPercentage": 0,
+                "weaponAccuracy": 0,
+                "eliminationsPerLife": 0,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 0
             }, {
                 "hero": "McCree",
-                "played": "--",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000042.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000042.png",
+                "timePlayed": 0,
+                "gamesWon": 0,
+                "winPercentage": 0,
+                "weaponAccuracy": 0,
+                "eliminationsPerLife": 0,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 0
             }, {
                 "hero": "Zarya",
-                "played": "--",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000068.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000068.png",
+                "timePlayed": 0,
+                "gamesWon": 0,
+                "winPercentage": 0,
+                "weaponAccuracy": 0,
+                "eliminationsPerLife": 0,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 0
             }, {
                 "hero": "Mei",
-                "played": "--",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E00000000000DD.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E00000000000DD.png",
+                "timePlayed": 0,
+                "gamesWon": 0,
+                "winPercentage": 0,
+                "weaponAccuracy": 0,
+                "eliminationsPerLife": 0,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 0
             }, {
                 "hero": "Ana",
-                "played": "--",
-                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000013B.png"
+                "img": "https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E000000000013B.png",
+                "timePlayed": 0,
+                "gamesWon": 0,
+                "winPercentage": 0,
+                "weaponAccuracy": 0,
+                "eliminationsPerLife": 0,
+                "multikillBest": 0,
+                "objectiveKillsAverage": 0
             }]
         },
         "combat": {

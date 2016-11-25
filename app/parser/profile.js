@@ -110,7 +110,6 @@ module.exports = function(platform, region, tag, cb) {
                 cb && cb(null, json);
                 resolve(json);
             } catch (err) {
-                console.log(err);
                 reject(err);
             }
         }).catch(err => {
