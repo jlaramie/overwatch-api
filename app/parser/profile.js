@@ -82,7 +82,7 @@ module.exports = function(platform, region, tag, cb) {
 
                 if (starEl !== null) {
                     star = $('.player-level .player-rank').attr('style').slice(21, 107);
-                    playerPrestige = Utilities.getPrestige(star.match(/0x([0-9a-f]*)/)[0]);
+                    playerPrestige = Utilities.getPrestige(star.match(/0x([0-9a-f]*)/i)[0]);
                 }
 
                 const json = {
