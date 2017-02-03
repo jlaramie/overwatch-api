@@ -153,7 +153,6 @@ module.exports = function(platform, region, tag, cb) {
                 cb && cb(null, json);
                 resolve(json);
             } catch (e) {
-                console.log(e);
                 reject(e);
             }
         }).catch(err => {
