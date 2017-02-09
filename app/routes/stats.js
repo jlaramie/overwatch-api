@@ -29,26 +29,33 @@ import cache from '../cache';
  */
 router.get('/:platform/:region/:tag', (req, res) => {
 
-  const platform = req.params.platform;
-  const region = req.params.region;
-  const tag = req.params.tag;
+    const platform = req.params.platform;
+    const region = req.params.region;
+    const tag = req.params.tag;
 
-  const cacheKey = `stats_${platform}_${region}_${tag}`;
-  const timeout = 60 * 10; // 10 minutes.
+    const cacheKey = `stats_${platform}_${region}_${tag}`;
+    const timeout = 60 * 10; // 10 minutes.
 
-  cache.getOrSet(cacheKey, timeout, getStats, function(data) {
-    if (data.statusCode) {
-      res.status(data.response.statusCode).send(data.response.statusMessage);
-    } else {
-      res.json(data);
-    }
-  });
-
-  function getStats(callback) {
-    parse(platform, region, tag, (data) => {
-      callback(data);
+    cache.getOrSet(cacheKey, timeout, getStats, function(err, data) {
+        if (err) {
+            res.status(err.response.statusCode).send(err.response.statusMessage);
+        } else {
+            res.json(data);
+        }
     });
-  }
+
+    function getStats(callback) {
+        parse(platform, region, tag).then(function(data) {
+            console.log('yeah', callback);
+            if (callback) {
+                callback(null, data);
+            }
+        }, function(err) {
+            if (callback) {
+                callback(err);
+            }
+        });
+    }
 });
 
 export default router;

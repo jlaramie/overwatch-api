@@ -5,6 +5,8 @@ const Utilities = require('../utilities');
 
 // export default function(platform, region, tag, cb) {
 module.exports = function(platform, region, tag, cb) {
+    platform = (platform || '').toLowerCase();
+    region = (region || '').toLowerCase();
 
     const url = platform === 'psn' || platform === 'xbl' ? `https://playoverwatch.com/en-us/career/${platform}/${tag}` : `https://playoverwatch.com/en-us/career/${platform}/${region}/${tag}`;
     const promise = new Promise(function(resolve, reject) {

@@ -2,3 +2,4 @@ node_modules/
 logs/
 docs/
 .DS_Store
+.env
