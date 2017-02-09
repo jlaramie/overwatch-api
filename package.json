@@ -1,6 +1,6 @@
 {
   "name": "overwatch-api",
-  "version": "0.0.1",
+  "version": "0.0.6",
   "description": "Overwatch API",
   "main": "index.js",
   "engines": {
@@ -25,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alfg/overwatch-api.git"
+    "url": "git+https://gitlab.com/jlaramie/overwatch-api.git"
   },
   "keywords": [
     "node",
@@ -39,7 +39,7 @@
   "author": "Alf",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/alfg/overwatch-api/issues"
+    "url": "https://gitlab.com/jlaramie/overwatch-api/issues"
   },
-  "homepage": "https://github.com/alfg/overwatch-api"
+  "homepage": "https://gitlab.com/jlaramie/overwatch-api"
 }
