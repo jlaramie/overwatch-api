@@ -22,26 +22,32 @@ import cache from '../cache';
     {
      data: {
         username: "user",
+        avatar: "https://blzgdapipro-a.akamaihd.net/game/unlocks/0x0250000000000EFD.png",
         games: {
           quickplay: {
-            wins: "252"
+            wins: 252
           },
           competitive: {
-            wins: "9",
+            wins: 9,
             lost: 18,
-            played: "27"
+            played: 27,
+            tied: 19,
+            winPercentage: 46
           }
         },
         playtime: {
-          quickplay: "63 hours",
-          competitive: "5 hours"
+          quickplay: 63,
+          competitive: 5
         },
         competitive: {
-          rank: "2083",
+          rank: 2083,
           rank_img: "https://blzgdapipro-a.akamaihd.net/game/rank-icons/rank-10.png"
         },
+        level: 40,
+        prestige: 4,
+        levelFull: 440,
         levelFrame: "https://blzgdapipro-a.akamaihd.net/game/playerlevelrewards/0x025000000000091F_Border.png",
-        star: ""
+        star: "https://blzgdapipro-a.akamaihd.net/game/playerlevelrewards/0x0250000000000939_Rank.png"
       }
     }
  */
