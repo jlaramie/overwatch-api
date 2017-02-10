@@ -12,36 +12,31 @@ var cache = {
         myCache.get(cacheKey, function(err, value) {
             if (!err) {
                 if (value == undefined) {
-                    fn(function(fnErr, data) {
-                        callback(fnErr, data);
-                    });
+                    cache.set(cacheKey, timeout, fn, callback);
                 } else {
                     callback(null, value);
                 }
+            } else {
+                callback(err);
             }
         });
     },
 
     get: function(cacheKey, callback) {
         myCache.get(cacheKey, function(err, value) {
-            if (!err) {
-                if (value == undefined) {
-                    callback(value);
-                } else {
-                    callback(value);
-                }
-            }
+            callback(err, value);
         });
     },
 
     set: function(cacheKey, timeout, fn, callback) {
-        fn(function(data) {
-            myCache.set(cacheKey, data, timeout, function(err, success) {
-                if (!err && success) {
-                    callback(data);
-                }
-                callback();
-            });
+        fn(function(fnErr, data) {
+            if (!fnErr) {
+                myCache.set(cacheKey, data, timeout, function(err, success) {
+                    callback(err, data);
+                });
+            } else {
+                callback(fnErr);
+            }
         });
     }
 }
