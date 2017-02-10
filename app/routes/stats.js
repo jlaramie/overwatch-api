@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-import parse from '../parser/stats';
+import parse from '../parser/profile';
 import cache from '../cache';
 
 /**
@@ -41,16 +41,20 @@ router.get('/:platform/:region/:tag', (req, res) => {
     const region = req.params.region;
     const tag = req.params.tag;
 
-    const cacheKey = `stats_${platform}_${region}_${tag}`;
-    const timeout = 60 * 10; // 10 minutes.
+    const cacheKey = `profile_${platform}_${region}_${tag}`;
+    const timeout = 60 * 5; // 5 minutes.
 
     cache.getOrSet(cacheKey, timeout, getStats, function(err, data) {
         if (err) {
             res.status(500).json({
                 error: 'Error retrieving stats'
             });
+            console.log(err);
         } else {
-            res.json(data);
+            res.json({
+            	username: data.username,
+            	stats: data.stats
+            });
         }
     });
 

@@ -1,118 +1,290 @@
 const cheerio = require('cheerio');
 const rp = require('request-promise');
 const Promise = require('promise');
+const trim = require('trim');
+const moment = require('moment');
 const Utilities = require('../utilities');
 
+function toCamelCase(str) {
+    return str
+        .replace(/-/g, ' ')
+        .replace(/\s(.)/g, function($1) {
+            return $1.toUpperCase();
+        })
+        .replace(/\s/g, '')
+        .replace(/^(.)/, function($1) {
+            return $1.toLowerCase();
+        });
+}
+
+function timeToSeconds(value) {
+    var timeInSeconds = 0;
+
+    value.split(':').reverse().map(function(part, i) {
+        return parseInt(part, 10) * ((60 * i) || 1);
+    }).forEach(function(seconds) {
+        timeInSeconds = timeInSeconds + seconds;
+    });
+
+    return timeInSeconds;
+}
+
+function formatValue(value) {
+    // Strip out commas
+    value = value.replace(/,/g, '');
+
+    var timeStrings = ['seconds', 'minutes', 'hours', 'days'],
+        parts = value.split(' ');
+
+    if (value.indexOf(':') !== -1) {
+        value = timeToSeconds(value);
+    } else if (value[value.length - 1] === '%') {
+        value = parseInt(value.substring(0, value.length - 1), 10);
+    } else if (timeStrings.indexOf(parts[1]) !== -1) {
+        value = moment.duration(parseInt(parts[0]), parts[1].toLowerCase()).asHours();
+    } else if (value === '--') {
+        value = 0;
+    } else if (value.indexOf('.') !== -1) {
+        value = parseFloat(value);
+    } else {
+        value = parseInt(value, 10);
+    }
+
+    return value;
+}
+
 // export default function(platform, region, tag, cb) {
+// Ballsacian1
+// 53800040
+// https://playoverwatch.com/en-us/career/get-platforms/53800040
 module.exports = function(platform, region, tag, cb) {
     platform = (platform || '').toLowerCase();
     region = (region || '').toLowerCase();
 
     const url = platform === 'psn' || platform === 'xbl' ? `https://playoverwatch.com/en-us/career/${platform}/${tag}` : `https://playoverwatch.com/en-us/career/${platform}/${region}/${tag}`;
     const promise = new Promise(function(resolve, reject) {
-
         rp(url).then((htmlString) => {
             try {
                 // Begin html parsing.
                 const $ = cheerio.load(htmlString);
                 const user = $('.header-masthead').text();
-                const avatar = $('.player-portrait').attr('src');
-                const playerLevel = parseInt($('.player-level .u-vertical-center').first().text(), 10);
-                const won = {};
-                const lost = {};
-                const played = {};
-                const tied = {};
-                const time = {};
+                const modes = ['quickplay', 'competitive'];
+                const stats = {
+                    competitive: {
+                        featured: getFeaturedStats('competitive'),
+                        topHeroes: getTopHeroStats('competitive'),
+                        careerStats: getCareerStats('competitive')
+                    },
+                    quickplay: {
+                        featured: getFeaturedStats('quickplay'),
+                        topHeroes: getTopHeroStats('quickplay'),
+                        careerStats: getCareerStats('quickplay')
+                    }
+                };
+                const profile = {
+                    username: user,
+                    avatarImg: $('.player-portrait').attr('src'),
+                    games: {
+                        quickplay: {
+                            wins: stats.quickplay.careerStats.allHeroes.game.gamesWon
+                        },
+                        competitive: {
+                            wins: stats.competitive.careerStats.allHeroes.game.gamesWon,
+                            lost: stats.competitive.careerStats.allHeroes.miscellaneous.gamesLost,
+                            tied: stats.competitive.careerStats.allHeroes.miscellaneous.gamesTied,
+                            winPercentage: (stats.competitive.careerStats.allHeroes.game.gamesWon / stats.competitive.careerStats.allHeroes.game.gamesPlayed) * 100
+                        }
+                    },
+                    playtime: {
+                        quickplay: stats.quickplay.careerStats.allHeroes.game.timePlayed,
+                        competitive: stats.competitive.careerStats.allHeroes.game.timePlayed
+                    },
+                    competitive: {
+                        rank: parseInt($('.competitive-rank div').first().text(), 10),
+                        rankImg: $('.competitive-rank img').attr('src')
+                    },
+                    level: parseInt($('.player-level .u-vertical-center').first().text(), 10),
+                    levelFrameImg: $('.player-level').attr('style').slice(21, 109),
+                    starImg: ($('.player-level .player-rank').attr('style') || '').slice(21, 107),
+                    prestige: 0,
+                    levelFull: 0
+                };
+                profile.prestige = Utilities.getPrestige(profile.starImg.match(/0x([0-9a-f]*)/i)[0]);
+                profile.levelFull = (profile.prestige * 100) + profile.level;
+                /**
+                 * Iterates over the Top Heroes dropdown to collect stats for all the top heroes.
+                 * The stats are organized by hero before being put into an array of heroes with stats.
+                 * [{
+                 *     hero: Reinhardt,
+                 *     img: https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000007.png,
+                 *     timePLayed: 59,
+                 *     gamesWon: 129,
+                 *     winPercentage: 47,
+                 *     weaponAccuracy: 0,
+                 *     eliminationsPerLife: 1,
+                 *     multikillBest: 5,
+                 *     objectKillsAverage: 9
+                 * }]
+                 */
+                function getTopHeroStats(mode) {
+                    var stats = [],
+                        statsAvailable = [],
+                        statsByHeroes = {}
 
-                let compRank;
-                let compRankImg;
-                let star = '';
-                let playerPrestige = 0;
+                    // Get all the top hero stats, their names, and guid
+                    const $availableStats = $(`#${mode} [data-group-id="comparisons"] option`);
+                    $availableStats.each(function(i, el) {
+                        var stat = {},
+                            $el = $(el);
 
-                const quickplayWonEl = $('#quickplay td:contains("Games Won")').next().html();
-                const quickplayPlayedEl = $('#quickplay td:contains("Games Played")').next().html();
-                const quickplayTimePlayedEl = $('#quickplay td:contains("Time Played")').next().html();
+                        stat.name = $el.attr('option-id');
+                        stat.id = $el.attr('value');
+                        stat.key = toCamelCase(stat.name);
 
-                const compWonEl = $('#competitive td:contains("Games Won")').next().html();
-                const compPlayedEl = $('#competitive td:contains("Games Played")').next().html();
-                const compTiedEl = $('#competitive td:contains("Games Tied")').next().html();
-                const compLostEl = $('#competitive td:contains("Games Lost")').next().html();
-                const compTimePlayedEl = $('#competitive td:contains("Time Played")').next().html();
-                const compRankEl = $('.competitive-rank');
+                        statsAvailable.push(stat);
+                    });
 
-                const levelFrame = $('.player-level').attr('style').slice(21, 109);
-                const starEl = $('.player-level .player-rank').html();
+                    // Iterate over available top hero stats 
+                    statsAvailable.forEach(function(statInfo) {
+                        const $heroEls = $(`#${mode} [data-category-id="${statInfo.id}"]`).find('.progress-category-item');
 
-                if (compRankEl !== null) {
-                    compRankImg = $('.competitive-rank img').attr('src');
-                    compRank = $('.competitive-rank div').html();
+                        // Iterate over the heroes and reutrn the stats
+                        $heroEls.each(function(i, el) {
+                            var $el = $(el);
+                            const heroName = $el.find('.title').text();
+                            const stat = statsByHeroes[heroName] = statsByHeroes[heroName] || {};
+                            const value = $el.find('.description').text().trim();
+
+                            stat.hero = heroName;
+                            stat.img = $el.find('img').attr('src');
+
+                            stat[statInfo.key] = formatValue(value);
+                        });
+
+                    });
+
+                    // Add heroes with their stats to the stats array
+                    Object.keys(statsByHeroes).forEach(function(key) {
+                        stats.push(statsByHeroes[key]);
+                    });
+
+                    return stats;
                 }
 
-                if (quickplayWonEl !== null) {
-                    won.quickplay = quickplayWonEl.trim().replace(/,/g, '');
+                /**
+                 * Returns featured stats object keyed by the stat name in camelCase and with the value parsed
+                 * {
+                 *    eliminationsAverage: 21.9,
+                 *    damageDoneAverage: 11,
+                 *    deathsAverage: 11.1,
+                 *    finalBlowsAverage: 11.26,
+                 *    healingDoneAverage: 1,
+                 *    objectiveKillsAverage: 10.01,
+                 *    objectiveTimeAverage: 126,
+                 *    soloKillsAverage: 1.37
+                 * }
+                 */
+                function getFeaturedStats(mode) {
+                    var $featuredEls = $(`#${mode} section.highlights-section .card`),
+                        stats = {};
+
+                    $featuredEls.each(function() {
+                        var $el = $(this),
+                            key = toCamelCase($el.find('.card-copy').text()),
+                            value = $el.find('.card-heading').text();
+
+                        stats[key] = formatValue(value);
+                    });
+
+                    return stats;
                 }
 
-                if (quickplayPlayedEl !== null) {
-                    played.quickplay = quickplayPlayedEl.trim().replace(/,/g, '');
-                    lost.quickplay = played.quickplay - won.quickplay;
+                /**
+                 * Returns career stats for items in the career stats dropdown
+                 * {
+                 *     allHeroes: {
+                 *         combat: {
+                 *             meleeFinalBlows: 70
+                 *         },
+                 *         deaths: {}
+                 *     }
+                 * }
+                 */
+                function getCareerStats(mode) {
+                    var stats = {},
+                        groups = $(`#${mode} select[data-group-id="stats"] option`).map(function() {
+                            // All Heroes, Reinhardt, etc..
+                            var stat = {},
+                                $el = $(this);
+
+                            stat.name = $el.attr('option-id');
+                            stat.id = $el.attr('value');
+                            stat.key = toCamelCase(stat.name.toLowerCase());
+
+                            return stat;
+                        }).get();
+
+                    groups.forEach(function(group) {
+                        stats[group.key] = getCategoryStats(mode, group);
+                    });
+
+                    return stats;
                 }
 
-                if (quickplayTimePlayedEl !== null) {
-                    time.quickplay = quickplayTimePlayedEl.trim().replace(/,/g, '');
-                }
+                /**
+                 * Returns stats for a given group
+                 * {
+                 *     combat: {
+                 *         meleeFinalBlows: 70
+                 *     }
+                 * }
+                 */
+                function getCategoryStats(mode, group) {
+                    var stats = {},
+                        statCategories = [
+                            'Combat',
+                            'Deaths',
+                            'Match Awards',
+                            'Assists',
+                            'Average',
+                            'Miscellaneous',
+                            'Best',
+                            'Game',
+                            'Hero Specific',
+                        ];
 
-                if (compWonEl !== null) {
-                    won.competitive = compWonEl.trim().replace(/,/g, '');
-                }
+                    statCategories.forEach(function(category) {
+                        var $els = $(`#${mode} [data-category-id="${group.id}"] span:contains("${category}")`).closest('table').find('tbody tr'),
+                            categoryStats = {},
+                            key = toCamelCase(category);
 
-                if (compPlayedEl !== null) {
-                    played.competitive = compPlayedEl.trim().replace(/,/g, '');
-                    // lost.competitive = played.competitive - won.competitive;
-                }
+                        $els.each(function() {
+                            var $el = $(this),
+                                title = $el.find('td').first().text(),
+                                key = toCamelCase(title.toLowerCase()),
+                                value = $el.find('td').next().text();
 
-                if (compTiedEl !== null) {
-                    tied.competitive = compTiedEl.trim().replace(/,/g, '');
-                }
+                            categoryStats[key] = formatValue(value);
+                        });
 
-                if (compLostEl !== null) {
-                    lost.competitive = compLostEl.trim().replace(/,/g, '');
-                }
+                        if ($els.length > 0) {
+                            stats[key] = categoryStats
+                        }
+                    });
 
-                if (compTimePlayedEl !== null) {
-                    time.competitive = compTimePlayedEl.trim().replace(/,/g, '');
-                }
-
-                if (starEl !== null) {
-                    star = $('.player-level .player-rank').attr('style').slice(21, 107);
-                    playerPrestige = Utilities.getPrestige(star.match(/0x([0-9a-f]*)/i)[0]);
+                    return stats;
                 }
 
                 const json = {
                     username: user,
-                    avatar: avatar,
-                    games: {
-                        quickplay: { wins: won.quickplay, lost: lost.quickplay, played: played.quickplay },
-                        competitive: {
-                            wins: won.competitive,
-                            lost: lost.competitive,
-                            played: played.competitive,
-                            tied: tied.competitive,
-                            winPercentage: parseInt(won.competitive) / parseInt(played.competitive) * 100
-                        },
-                    },
-                    playtime: { quickplay: time.quickplay, competitive: time.competitive },
-                    competitive: { rank: compRank, rank_img: compRankImg },
-                    level: playerLevel,
-                    prestige: playerPrestige,
-                    levelFull: (playerPrestige * 100) + playerLevel,
-                    levelFrame: levelFrame,
-                    star: star
+                    stats: stats,
+                    profile: profile
                 }
 
                 cb && cb(null, json);
                 resolve(json);
-            } catch (err) {
-                reject(err);
+            } catch (e) {
+                reject(e);
             }
         }).catch(err => {
             cb && cb(err);

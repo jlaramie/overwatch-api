@@ -20,8 +20,8 @@ import cache from '../cache';
  * @apiSuccessExample {json} Success-Response:
     HTTP/1.1 200 OK
     {
-     data: {
-        username: "user",
+      username: "user",
+      profile: {
         avatar: "https://blzgdapipro-a.akamaihd.net/game/unlocks/0x0250000000000EFD.png",
         games: {
           quickplay: {
@@ -36,18 +36,18 @@ import cache from '../cache';
           }
         },
         playtime: {
-          quickplay: 63,
-          competitive: 5
+          quickplay: 63, // in hours
+          competitive: 5 // in hours
         },
         competitive: {
           rank: 2083,
           rank_img: "https://blzgdapipro-a.akamaihd.net/game/rank-icons/rank-10.png"
         },
         level: 40,
-        prestige: 4,
-        levelFull: 440,
         levelFrame: "https://blzgdapipro-a.akamaihd.net/game/playerlevelrewards/0x025000000000091F_Border.png",
-        star: "https://blzgdapipro-a.akamaihd.net/game/playerlevelrewards/0x0250000000000939_Rank.png"
+        star: "https://blzgdapipro-a.akamaihd.net/game/playerlevelrewards/0x0250000000000939_Rank.png",
+        prestige: 4,
+        levelFull: 440
       }
     }
  */
@@ -58,15 +58,19 @@ router.get('/:platform/:region/:tag', (req, res) => {
     const tag = req.params.tag;
 
     const cacheKey = `profile_${platform}_${region}_${tag}`;
-    const timeout = 60 * 10; // 10 minutes.
+    const timeout = 60 * 5; // 10 minutes.
 
     cache.getOrSet(cacheKey, timeout, getProfile, function(err, data) {
         if (err) {
             res.status(500).json({
-                error: 'Error retrieving stats'
+                error: 'Error retrieving profile'
             });
+            console.log(err);
         } else {
-            res.json(data);
+            res.json({
+                username: data.username,
+                profile: data.profile
+            });
         }
     });
 
