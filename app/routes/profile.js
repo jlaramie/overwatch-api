@@ -56,7 +56,9 @@ router.get('/:platform/:region/:tag', (req, res) => {
 
     cache.getOrSet(cacheKey, timeout, getProfile, function(err, data) {
         if (err) {
-            res.status(err.response.statusCode).send(err.response.statusMessage);
+            res.status(500).json({
+                error: 'Error retrieving stats'
+            });
         } else {
             res.json(data);
         }
