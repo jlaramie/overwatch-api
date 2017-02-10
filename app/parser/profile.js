@@ -277,8 +277,8 @@ module.exports = function(platform, region, tag, cb) {
 
                 const json = {
                     username: user,
-                    stats: stats,
-                    profile: profile
+                    profile: profile,
+                    stats: stats
                 }
 
                 cb && cb(null, json);
