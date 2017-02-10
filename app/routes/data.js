@@ -21,6 +21,7 @@ import cache from '../cache';
     HTTP/1.1 200 OK
     {
       username: "user",
+      timestamp: "1486762656854",
       profile: {...}, // See profile response example
       stats: {...} // See stats response example
     }
@@ -32,7 +33,7 @@ router.get('/:platform/:region/:tag', (req, res) => {
     const tag = req.params.tag;
 
     const cacheKey = `profile_${platform}_${region}_${tag}`;
-    const timeout = 60 * 5; // 10 minutes.
+    const timeout = 60 * 5; // 5 minutes.
 
     cache.getOrSet(cacheKey, timeout, getProfile, function(err, data) {
         if (err) {

@@ -277,8 +277,9 @@ module.exports = function(platform, region, tag, cb) {
 
                 const json = {
                     username: user,
+                    timestamp: parseInt(moment().format('x'), 10),
                     profile: profile,
-                    stats: stats
+                    stats: stats,
                 }
 
                 cb && cb(null, json);

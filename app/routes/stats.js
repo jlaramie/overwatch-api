@@ -20,7 +20,8 @@ import cache from '../cache';
  * @apiSuccessExample {json} Success-Response:
     HTTP/1.1 200 OK
     {
-      username: "user"
+      username: "user",
+      timestamp: "1486762656854",
       stats: {
         competitive: {
           featured: {...},
