@@ -23,14 +23,14 @@ import cache from '../cache';
       username: "user"
       stats: {
         competitive: {
-		  featured: {...},
-		  topHeroes: [...],
-		  careerStats: {...}
+          featured: {...},
+          topHeroes: [...],
+          careerStats: {...}
         },
         quickplay: {
-		  featured: {...},
-		  topHeroes: [...],
-		  careerStats: {...}
+          featured: {...},
+          topHeroes: [...],
+          careerStats: {...}
         }
       }
     }
@@ -52,8 +52,8 @@ router.get('/:platform/:region/:tag', (req, res) => {
             console.log(err);
         } else {
             res.json({
-            	username: data.username,
-            	stats: data.stats
+                username: data.username,
+                stats: data.stats
             });
         }
     });
