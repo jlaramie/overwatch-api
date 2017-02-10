@@ -46,7 +46,6 @@ router.get('/:platform/:region/:tag', (req, res) => {
 
     function getStats(callback) {
         parse(platform, region, tag).then(function(data) {
-            console.log('yeah', callback);
             if (callback) {
                 callback(null, data);
             }
