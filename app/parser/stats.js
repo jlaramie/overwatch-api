@@ -16,136 +16,231 @@ function toCamelCase(str) {
         });
 }
 
+function timeToSeconds(value) {
+    var timeInSeconds = 0;
+
+    value.split(':').reverse().map(function(part, i) {
+        return parseInt(part, 10) * ((60 * i) || 1);
+    }).forEach(function(seconds) {
+        timeInSeconds = timeInSeconds + seconds;
+    });
+
+    return timeInSeconds;
+}
+
+function formatValue(value) {
+    var timeStrings = ['seconds', 'minutes', 'hours', 'days'],
+        parts = value.split(' ');
+
+    if (value.indexOf(':') !== -1) {
+        value = timeToSeconds(value);
+    } else if (value[value.length - 1] === '%') {
+        value = parseInt(value.substring(0, value.length - 1), 10);
+    } else if (timeStrings.indexOf(parts[1]) !== -1) {
+        value = moment.duration(parseInt(parts[0]), parts[1].toLowerCase()).asHours();
+    } else if (value === '--') {
+        value = 0;
+    } else if (value.indexOf('.') !== -1) {
+        value = parseFloat(value);
+    } else {
+        value = parseInt(value, 10);
+    }
+
+    return value;
+}
+
 // export default function(platform, region, tag, cb) {
+// Ballsacian1
+// 53800040
+// https://playoverwatch.com/en-us/career/get-platforms/53800040
 module.exports = function(platform, region, tag, cb) {
     platform = (platform || '').toLowerCase();
     region = (region || '').toLowerCase();
 
     const url = platform === 'psn' || platform === 'xbl' ? `https://playoverwatch.com/en-us/career/${platform}/${tag}` : `https://playoverwatch.com/en-us/career/${platform}/${region}/${tag}`;
-    const sortBy = 'all';
     const promise = new Promise(function(resolve, reject) {
         rp(url).then((htmlString) => {
             try {
                 // Begin html parsing.
                 const $ = cheerio.load(htmlString);
                 const user = $('.header-masthead').text();
-
+                const modes = ['quickplay', 'competitive'];
                 const stats = {
-                    top_heroes: {}
+                    competitive: {
+                        featured: getFeaturedStats('competitive'),
+                        topHeroes: getTopHeroStats('competitive'),
+                        careerStats: getCareerStats('competitive')
+                    },
+                    quickplay: {
+                        featured: getFeaturedStats('quickplay'),
+                        topHeroes: getTopHeroStats('quickplay'),
+                        careerStats: getCareerStats('quickplay')
+                    }
                 };
 
-                const availableHeroStats = {
-                    competitive: [],
-                    quickplay: []
-                };
+                /**
+                 * Iterates over the Top Heroes dropdown to collect stats for all the top heroes.
+                 * The stats are organized by hero before being put into an array of heroes with stats.
+                 * [{
+                 *     hero: Reinhardt,
+                 *     img: https://blzgdapipro-a.akamaihd.net/game/heroes/small/0x02E0000000000007.png,
+                 *     timePLayed: 59,
+                 *     gamesWon: 129,
+                 *     winPercentage: 47,
+                 *     weaponAccuracy: 0,
+                 *     eliminationsPerLife: 1,
+                 *     multikillBest: 5,
+                 *     objectKillsAverage: 9
+                 * }]
+                 */
+                function getTopHeroStats(mode) {
+                    var stats = [],
+                        statsAvailable = [],
+                        statsByHeroes = {}
 
-                const statsByHeroes = {
-                    competitive: {},
-                    quickplay: {},
-                };
+                    // Get all the top hero stats, their names, and guid
+                    const $availableStats = $(`#${mode} [data-group-id="comparisons"] option`);
+                    $availableStats.each(function(i, el) {
+                        var stat = {},
+                            $el = $(el);
 
-                // Get all the availble stats, their names, and guid
-                Object.keys(availableHeroStats).forEach(function(mode) {
-                    const statsForMode = availableHeroStats[mode];
-                    const availableStats = $(`#${mode} [data-group-id="comparisons"] option`);
-
-                    availableStats.each(function(i, el) {
-                        var stat = {};
-
-                        stat.name = $(this).attr('option-id');
-                        stat.id = $(this).attr('value');
+                        stat.name = $el.attr('option-id');
+                        stat.id = $el.attr('value');
                         stat.key = toCamelCase(stat.name);
 
-                        statsForMode.push(stat);
+                        statsAvailable.push(stat);
                     });
-                });
 
-                // Iterate over stats for a given mode and populate stats data
-                function populateTopHeroStats(mode) {
-                    var topHeroStats = {};
+                    // Iterate over available top hero stats 
+                    statsAvailable.forEach(function(statInfo) {
+                        const $heroEls = $(`#${mode} [data-category-id="${statInfo.id}"]`).find('.progress-category-item');
 
-                    stats.top_heroes[mode] = [];
+                        // Iterate over the heroes and reutrn the stats
+                        $heroEls.each(function(i, el) {
+                            var $el = $(el);
+                            const heroName = $el.find('.title').text();
+                            const stat = statsByHeroes[heroName] = statsByHeroes[heroName] || {};
+                            const value = $el.find('.description').text().trim();
 
-                    availableHeroStats[mode].forEach(function(statInfo) {
-                        const heroEls = $(`#${mode} [data-category-id="${statInfo.id}"]`).find('.progress-category-item');
+                            stat.hero = heroName;
+                            stat.img = $el.find('img').attr('src');
 
-                        heroEls.each(function(i, el) {
-                            const heroName = $(this).find('.title').text();
-                            const stat = statsByHeroes[mode][heroName] = statsByHeroes[mode][heroName] || {};
-                            const value = trim($(this).find('.description').text());
-
-                            stat.hero = $(this).find('.title').text();
-                            stat.img = $(this).find('img').attr('src');
-
-                            switch (statInfo.key) {
-                                case 'timePlayed':
-                                    const valueSplit = value.split(' ');
-                                    stat[statInfo.key] = value === '--' ? 0 : moment.duration(parseInt(valueSplit[0]), valueSplit[1].toLowerCase()).asHours();
-                                    break;
-                                case 'weaponAccuracy':
-                                    stat[statInfo.key] = parseInt(value.replace('%', ''), 10);
-                                    break;
-                                default:
-                                    stat[statInfo.key] = parseInt(value, 10);
-                                    break;
-                            }
-
-                            if (stats['top_heroes'][mode].indexOf(stat) === -1) {
-                                stats['top_heroes'][mode].push(stat);
-                            }
+                            stat[statInfo.key] = formatValue(value);
                         });
+
                     });
+
+                    // Add heroes with their stats to the stats array
+                    Object.keys(statsByHeroes).forEach(function(key) {
+                        stats.push(statsByHeroes[key]);
+                    });
+
+                    return stats;
                 }
 
-                // 
-                // Top Heroes.
-                // 
-                populateTopHeroStats('quickplay');
-                populateTopHeroStats('competitive');
+                /**
+                 * Returns featured stats object keyed by the stat name in camelCase and with the value parsed
+                 * {
+                 *    eliminationsAverage: 21.9,
+                 *    damageDoneAverage: 11,
+                 *    deathsAverage: 11.1,
+                 *    finalBlowsAverage: 11.26,
+                 *    healingDoneAverage: 1,
+                 *    objectiveKillsAverage: 10.01,
+                 *    objectiveTimeAverage: 126,
+                 *    soloKillsAverage: 1.37
+                 * }
+                 */
+                function getFeaturedStats(mode) {
+                    var $featuredEls = $(`#${mode} section.highlights-section .card`),
+                        stats = {};
 
-                //
-                // Career Stats
-                //
-                const statCategories = [
-                    'Combat',
-                    'Deaths',
-                    'Match Awards',
-                    'Assists',
-                    'Average',
-                    'Miscellaneous',
-                    'Best',
-                    'Game'
-                ];
+                    $featuredEls.each(function() {
+                        var $el = $(this),
+                            key = toCamelCase($el.find('.card-copy').text()),
+                            value = $el.find('.card-heading').text();
 
-                // Quickplay Stats.
-                statCategories.forEach(function(item) {
-                    const els = $(`#quickplay [data-category-id="0x02E00000FFFFFFFF"] span:contains("${item}")`).closest('table').find('tbody tr');
-                    let statsArr = [];
-                    els.each(function(i, el) {
-                        let stat = {};
-                        stat.title = $(this).find('td').first().text();
-                        stat.value = $(this).find('td').next().text();
-                        statsArr.push(stat);
+                        stats[key] = formatValue(value);
                     });
-                    item = item.replace(' ', '_').toLowerCase();
-                    stats[item] = { quickplay: [] };
-                    stats[item]['quickplay'] = statsArr;
-                });
 
-                // Competitive Stats.
-                statCategories.forEach(function(item) {
-                    const els = $(`#competitive [data-category-id="0x02E00000FFFFFFFF"] span:contains("${item}")`).closest('table').find('tbody tr');
-                    let statsArr = [];
-                    els.each(function(i, el) {
-                        let stat = {};
-                        stat.title = $(this).find('td').first().text();
-                        stat.value = $(this).find('td').next().text();
-                        statsArr.push(stat);
+                    return stats;
+                }
+
+                /**
+                 * Returns career stats for items in the career stats dropdown
+                 * {
+                 *     allHeroes: {
+                 *         combat: {
+                 *             meleeFinalBlows: 70
+                 *         },
+                 *         deaths: {}
+                 *     }
+                 * }
+                 */
+                function getCareerStats(mode) {
+                    var stats = {},
+                        groups = $(`#${mode} select[data-group-id="stats"] option`).map(function() {
+                            // All Heroes, Reinhardt, etc..
+                            var stat = {},
+                                $el = $(this);
+
+                            stat.name = $el.attr('option-id');
+                            stat.id = $el.attr('value');
+                            stat.key = toCamelCase(stat.name.toLowerCase());
+
+                            return stat;
+                        }).get();
+
+                    groups.forEach(function(group) {
+                        stats[group.key] = getCategoryStats(mode, group);
                     });
-                    item = item.replace(' ', '_').toLowerCase();
-                    stats[item]['competitive'] = [];
-                    stats[item]['competitive'] = statsArr;
-                });
+
+                    return stats;
+                }
+
+                /**
+                 * Returns stats for a given group
+                 * {
+                 *     combat: {
+                 *         meleeFinalBlows: 70
+                 *     }
+                 * }
+                 */
+                function getCategoryStats(mode, group) {
+                    var stats = {},
+                        statCategories = [
+                            'Combat',
+                            'Deaths',
+                            'Match Awards',
+                            'Assists',
+                            'Average',
+                            'Miscellaneous',
+                            'Best',
+                            'Game',
+                            'Hero Specific',
+                        ];
+
+                    statCategories.forEach(function(category) {
+                        var $els = $(`#${mode} [data-category-id="${group.id}"] span:contains("${category}")`).closest('table').find('tbody tr'),
+                            categoryStats = {},
+                            key = toCamelCase(category);
+
+                        $els.each(function() {
+                            var $el = $(this),
+                                title = $el.find('td').first().text(),
+                                key = toCamelCase(title.toLowerCase()),
+                                value = $el.find('td').next().text();
+
+                            categoryStats[key] = formatValue(value);
+                        });
+
+                        if ($els.length > 0) {
+                            stats[key] = categoryStats
+                        }
+                    });
+
+                    return stats;
+                }
 
                 const json = {
                     username: user,

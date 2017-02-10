@@ -22,8 +22,16 @@ import cache from '../cache';
     {
       username: "user"
       stats: {
-        top_heroes: {...}
-        combat: {...}
+        competitive: {
+		  featured: {...},
+		  topHeroes: [...],
+		  careerStats: {...}
+        },
+        quickplay: {
+		  featured: {...},
+		  topHeroes: [...],
+		  careerStats: {...}
+        }
       }
     }
  */
