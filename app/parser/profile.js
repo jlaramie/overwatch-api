@@ -41,7 +41,7 @@ function formatValue(value) {
     } else if (value[value.length - 1] === '%') {
         value = parseInt(value.substring(0, value.length - 1), 10);
     } else if (timeStrings.indexOf(parts[1]) !== -1) {
-        value = moment.duration(parseInt(parts[0]), parts[1].toLowerCase()).asHours();
+        value = moment.duration(parseInt(parts[0]), parts[1].toLowerCase()).asSeconds();
     } else if (value === '--') {
         value = 0;
     } else if (value.indexOf('.') !== -1) {
