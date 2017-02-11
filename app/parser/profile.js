@@ -109,7 +109,7 @@ module.exports = function(platform, region, tag, cb) {
                     prestige: 0,
                     levelFull: 0
                 };
-                profile.prestige = Utilities.getPrestige(profile.starImg.match(/0x([0-9a-f]*)/i)[0]);
+                profile.prestige = profile.starImg ? Utilities.getPrestige(profile.starImg.match(/0x([0-9a-f]*)/i)[0]) : 0;
                 profile.levelFull = (profile.prestige * 100) + profile.level;
                 /**
                  * Iterates over the Top Heroes dropdown to collect stats for all the top heroes.
