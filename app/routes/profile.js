@@ -75,6 +75,7 @@ router.get('/:platform/:region/:tag', (req, res) => {
         } else {
             res.json({
                 username: data.username,
+                timestamp: data.timestamp,
                 profile: data.profile
             });
         }
