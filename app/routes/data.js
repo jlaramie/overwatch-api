@@ -38,7 +38,7 @@ router.get('/:platform/:region/:tag', (req, res) => {
 
     // const cacheKey = `profile_${platform}_${region}_${tag}`;
     const cacheKey = `Stats:Profiles:${tag}:${platform}:${region}`;
-    const timeout = 60 * 5; // 5 minutes.
+    const timeout = 60 * 5 * 1000; // 5 minutes.
 
     cache.getOrSet(cacheKey, timeout, getProfile, true, function(err, data) {
         if (err) {
