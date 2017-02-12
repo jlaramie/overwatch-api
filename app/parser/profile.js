@@ -53,19 +53,6 @@ function formatValue(value) {
     return value;
 }
 
-function getHeroImage(guid) {
-    try {
-    if (guid === '0x02E00000FFFFFFFF') {
-        // Empty guid
-        return '';
-    }
-
-    return `https://blzgdapipro-a.akamaihd.net/game/heroes/small/${guid}.png`;
-    } catch(e) {
-                            console.log(e);
-                        }
-}
-
 // export default function(platform, region, tag, cb) {
 // Ballsacian1
 // 53800040
@@ -152,7 +139,6 @@ module.exports = function(platform, region, tag, cb) {
 
                         stat.name = $el.attr('option-id');
                         stat.id = $el.attr('value');
-                        stat.guid = $el.attr('value');
                         stat.key = toCamelCase(stat.name);
 
                         statsAvailable.push(stat);
@@ -169,9 +155,8 @@ module.exports = function(platform, region, tag, cb) {
                             const stat = statsByHeroes[heroName] = statsByHeroes[heroName] || {};
                             const value = $el.find('.description').text().trim();
 
-                            stat.name = heroName;
-                            stat.guid = $el.find('img').attr('src').match(/0x([0-9a-f]*)/i)[0];
-                            stat.img = getHeroImage(stat.guid);
+                            stat.hero = heroName;
+                            stat.img = $el.find('img').attr('src');
 
                             stat[statInfo.key] = formatValue(value);
                         });
@@ -267,12 +252,6 @@ module.exports = function(platform, region, tag, cb) {
                             'Game',
                             'Hero Specific',
                         ];
-
-                    stats.heroDetails = {
-                        guid: group.id,
-                        name: group.name,
-                        img: getHeroImage(group.id)
-                    };
 
                     statCategories.forEach(function(category) {
                         var $els = $(`#${mode} [data-category-id="${group.id}"] span:contains("${category}")`).closest('table').find('tbody tr'),
