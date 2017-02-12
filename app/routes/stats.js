@@ -77,14 +77,14 @@ router.get('/:platform/:region/:tag', (req, res) => {
     const cacheKey = `Stats:Profiles:${tag}:${platform}:${region}`;
     const timeout = 60 * 5 * 1000; // 5 minutes.
 
-    cache.getOrSet(cacheKey, timeout, getStats, isNewProfile, true, function(err, data) {
+    cache.getOrSet(cacheKey, timeout, getStats, isNewProfile, true, function(error, data) {
         var heroName = hero && heroes.indexOf(hero) !== -1 ? (heroMap[hero] || hero) : undefined;
 
-        if (err) {
+        if (error) {
+            console.log(`Error retrieving profile for ${tag} ${platform} ${region}`, error.name, error.statusCode);
             res.status(500).json({
-                error: 'Error retrieving stats'
+                error: `Error retrieving profile for ${tag} ${platform} ${region}`
             });
-            console.log(err);
         } else if (heroName) {
             res.json({
                 username: data.username,
@@ -113,9 +113,9 @@ router.get('/:platform/:region/:tag', (req, res) => {
             if (callback) {
                 callback(null, data, data.timestamp);
             }
-        }, function(err) {
+        }, function(error) {
             if (callback) {
-                callback(err);
+                callback(error);
             }
         });
     }
@@ -140,8 +140,8 @@ router.get('/:platform/:region/:tag', (req, res) => {
             isNew = isQuickplayChanged || isCompetitiveChanged;
 
             console.log('Comparing', isNew, oldData.timestamp, newData.timestamp, isQuickplayChanged, isCompetitiveChanged);
-        } catch (e) {
-            console.log('Error comparing data', e);
+        } catch (error) {
+            console.log('Error comparing data', error);
         }
 
         return isNew;

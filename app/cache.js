@@ -1,12 +1,16 @@
-var NodeCache = require('node-cache'),
-    myCache = new NodeCache(),
-    Promise = require('promise'),
+/* jshint esversion: 6 */
+
+var Promise = require('promise'),
     db = require('./db/adapter/redis.js'),
     flat = require('flat'),
     doBackgroundFech = true;
 
 function globalReject(name, error, reject, callback) {
-    console.log(name, error);
+    if (error) {
+        console.log(name, error.name, error.statusCode);
+    } else {
+        console.log(name);
+    }
 
     if (callback) {
         callback(error);
@@ -164,11 +168,16 @@ var cache = {
                 /**
                  * fn is what gets passed into the cache manager and is actually what loads and returns data.
                  */
-                fn(function(error, data) {
+                fn(function(fnErr, data) {
                     /**
                      * Determine if the data returned is unique or duplicate to old data
                      */
                     var isNew = !oldData || newCheck(oldData, data);
+
+                    if (fnErr) {
+                        globalReject('setFn', fnErr, innerReject, innerCallback);
+                        return;
+                    }
 
                     /**
                      * This does 1 of 2 things:
@@ -204,7 +213,7 @@ var cache = {
                         }
                     }, function(error) {
                         globalReject('setAndReturn', error, innerReject, innerCallback);
-                    })
+                    });
                 });
             }
         });
@@ -237,7 +246,7 @@ var cache = {
                     return;
                 }
 
-                if (value == undefined) {
+                if (value === undefined) {
                     args.pop();
                 }
 
@@ -261,9 +270,7 @@ var cache = {
                 });
             });
         });
-    },
-
-
-}
+    }
+};
 
 module.exports = cache;
