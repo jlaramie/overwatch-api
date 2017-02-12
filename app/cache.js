@@ -17,7 +17,7 @@ function globalReject(name, error, reject, callback) {
 }
 
 function globalResolve(name, data, resolve, callback) {
-    console.log(name, !!data, !!resolve, !!callback);
+    // console.log(name, !!data, !!resolve, !!callback);
 
     if (callback) {
         callback(undefined, data);

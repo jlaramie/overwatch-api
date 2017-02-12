@@ -41,7 +41,6 @@ router.get('/:platform/:region/:tag', (req, res) => {
     const timeout = 60 * 5; // 5 minutes.
 
     cache.getOrSet(cacheKey, timeout, getProfile, true, function(err, data) {
-        console.log('yay', err);
         if (err) {
             res.status(500).json({
                 error: 'Error retrieving profile'
