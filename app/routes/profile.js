@@ -53,15 +53,20 @@ import cache from '../cache';
     }
  */
 router.get('/:platform/:region/:tag', (req, res) => {
+    var region = req.params.region;
 
     const platform = req.params.platform;
-    const region = req.params.region;
     const tag = req.params.tag;
 
-    const cacheKey = `profile_${platform}_${region}_${tag}`;
-    const timeout = 60 * 5; // 5 minutes.
+    if(platform === 'psn' || platform === 'xbl') {
+        region = 'global';
+    }
 
-    cache.getOrSet(cacheKey, timeout, getProfile, function(err, data) {
+    // const cacheKey = `profile_${platform}_${region}_${tag}`;
+    const cacheKey = `Stats:Profiles:${tag}:${platform}:${region}`;
+    const timeout = 60 * 5; // 5 minutes.
+    
+    cache.getOrSet(cacheKey, timeout, getProfile, true, function(err, data) {
         if (err) {
             res.status(500).json({
                 error: 'Error retrieving profile'
@@ -78,7 +83,7 @@ router.get('/:platform/:region/:tag', (req, res) => {
     function getProfile(callback) {
         parse(platform, region, tag).then(function(data) {
             if (callback) {
-                callback(null, data);
+                callback(null, data, data.timestamp);
             }
         }, function(err) {
             if (callback) {

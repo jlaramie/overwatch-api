@@ -1,6 +1,6 @@
 {
   "name": "overwatch-api",
-  "version": "0.1.4",
+  "version": "0.1.8",
   "description": "Overwatch API",
   "main": "index.js",
   "engines": {
@@ -8,15 +8,19 @@
   },
   "dependencies": {
     "babel-register": "^6.22.0",
+    "bluebird": "^3.4.7",
     "cheerio": "^0.22.0",
     "eslint": "^3.4.0",
+    "flat": "^2.0.1",
     "moment": "^2.16.0",
     "node-cache": "^3.2.1",
     "promise": "^7.1.1",
+    "redis": "^2.6.5",
     "request": "^2.79.0",
     "request-promise": "^4.1.1",
     "srv-cli": "^0.3.3",
-    "trim": "0.0.1"
+    "trim": "0.0.1",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {},
   "scripts": {
@@ -44,3 +48,9 @@
   },
   "homepage": "https://gitlab.com/jlaramie/overwatch-api"
 }
+
+ 1486887611402 1486887461991
+
+ 1486888020630 1486887953176
+
+ 1486888408184 1486888396919 300

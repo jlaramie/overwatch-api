@@ -62,16 +62,21 @@ import cache from '../cache';
     }
  */
 router.get('/:platform/:region/:tag', (req, res) => {
+    var region = req.params.region;
 
     const platform = req.params.platform;
-    const region = req.params.region;
     const tag = req.params.tag;
     const hero = (req.query.hero || '').toLowerCase();
 
-    const cacheKey = `profile_${platform}_${region}_${tag}`;
+    if(platform === 'psn' || platform === 'xbl') {
+        region = 'global';
+    }
+
+    // const cacheKey = `profile_${platform}_${region}_${tag}`;
+    const cacheKey = `Stats:Profiles:${tag}:${platform}:${region}`;
     const timeout = 60 * 5; // 5 minutes.
 
-    cache.getOrSet(cacheKey, timeout, getStats, function(err, data) {
+    cache.getOrSet(cacheKey, timeout, getStats, true, function(err, data) {
         var heroName = hero && heroes.indexOf(hero) !== -1 ? (heroMap[hero] || hero) : undefined;
 
         if (err) {
@@ -100,7 +105,7 @@ router.get('/:platform/:region/:tag', (req, res) => {
     function getStats(callback) {
         parse(platform, region, tag).then(function(data) {
             if (callback) {
-                callback(null, data);
+                callback(null, data, data.timestamp);
             }
         }, function(err) {
             if (callback) {
