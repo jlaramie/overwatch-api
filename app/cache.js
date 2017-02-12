@@ -28,6 +28,16 @@ function globalResolve(name, data, resolve, callback) {
     }
 }
 
+function formatData(data) {
+    Object.keys(data).forEach(function(key) {
+        var numVal = parseFloat(data[key], 10);
+
+        if (numVal == data[key]) {
+            data[key] = numVal;
+        }
+    });
+}
+
 var cache = {
     /** Gets key from cache if exists, else sets the cache and returns data.
      * @param {string} cacheKey - Key to get or set.
@@ -102,6 +112,7 @@ var cache = {
 
         return new Promise(function(resolve, reject) {
             client.hgetallAsync(cacheKey).then(function(data) {
+                formatData(data);
                 globalResolve('resolve', data, resolve, callback);
             }, function(error) {
                 globalReject('get', error, reject, callback);
