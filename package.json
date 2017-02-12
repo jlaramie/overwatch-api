@@ -1,6 +1,6 @@
 {
   "name": "overwatch-api",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "Overwatch API",
   "main": "index.js",
   "engines": {
@@ -10,6 +10,7 @@
     "babel-register": "^6.22.0",
     "bluebird": "^3.4.7",
     "cheerio": "^0.22.0",
+    "deep-equal": "^1.0.1",
     "eslint": "^3.4.0",
     "flat": "^2.0.1",
     "moment": "^2.16.0",

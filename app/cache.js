@@ -2,7 +2,8 @@ var NodeCache = require('node-cache'),
     myCache = new NodeCache(),
     Promise = require('promise'),
     db = require('./db/adapter/redis.js'),
-    flat = require('flat');
+    flat = require('flat'),
+    doBackgroundFech = true;
 
 function globalReject(name, error, reject, callback) {
     console.log(name, error);
@@ -29,13 +30,17 @@ function globalResolve(name, data, resolve, callback) {
 }
 
 function formatData(data) {
-    Object.keys(data).forEach(function(key) {
-        var numVal = parseFloat(data[key], 10);
+    if (data) {
+        Object.keys(data).forEach(function(key) {
+            var numVal = parseFloat(data[key], 10);
 
-        if (numVal == data[key]) {
-            data[key] = numVal;
-        }
-    });
+            if (numVal == data[key]) {
+                data[key] = numVal;
+            }
+        });
+    }
+
+    return data;
 }
 
 var cache = {
@@ -46,31 +51,96 @@ var cache = {
      * @param {boolean} isLookup - First check as a generic key value and use that value for a final lookup and/or set.
      * @param {Function} callback - Callback function to send back data or value.
      */
-    getOrSet: function(cacheKey, timeout, fn, isLookup, callback) {
+    getOrSet: function(cacheKey, timeout, fn, newCheck, isLookup, callback) {
         var client = db.getClient();
 
         return new Promise(function(resolve, reject) {
             if (isLookup) {
-                client.getAsync(cacheKey).then(function(timestamp) {
-                    var time = Date.now();
+                /**
+                 * isLookup tells us that the cacheKey is just the first part and that we need to retrieve
+                 * the most recent id from a lookup.
+                 */
+                client.getAsync(cacheKey).then(function(timestamps) {
+                    var time = Date.now(),
+                        id,
+                        oldCacheKey,
+                        timestamp;
 
-                    timestamp = timestamp ? parseInt(timestamp, 10) : timestamp;
-                    console.log('getOrSet', cacheKey, timestamp, timeout, time, timestamp + timeout > time);
-                    if (timestamp && timestamp + timeout > time) {
-                        cache.get(`${cacheKey}:${timestamp}`).then(function(result) {
+                    /**
+                     * Timestamps are delimited by a | where the first timestamp is the ID and every
+                     * subsequent ones are actually the last checked time for new data.
+                     *
+                     * The last checked time defaults to the first timestamp if there are no other ones.
+                     *
+                     * Timestamp gets set to '1' in the case of refreshing the data. 
+                     * While 1, additional requests to get data only returns the old data and does not start a new update request.
+                     */
+                    timestamps = timestamps ? timestamps.split('|') : timestamps;
+                    timestamp = timestamps ? parseInt(timestamps[timestamps.length - 1], 10) : timestamps;
+                    id = timestamps ? parseInt(timestamps[0]) : timestamp;
+                    oldCacheKey = `${cacheKey}:${id}`;
+                    console.log('getOrSet', cacheKey, id, timestamp, timeout, time, timestamp + timeout > time);
+
+                    if (timestamp && (timestamp === 1 || timestamp + timeout > time)) {
+                        /**
+                         * If timestamp is not expired or timestamp is currently being refreshed,
+                         * return the current data.
+                         */
+                        cache.get(oldCacheKey).then(function(result) {
                             if (result) {
-                                globalResolve('resolve', flat.unflatten(result), resolve, callback);
+                                result = flat.unflatten(result);
+                                result.isRefreshing = false;
+                                globalResolve('resolve', result, resolve, callback);
                             } else {
                                 setAndReturn();
                             }
                         });
                     } else {
-                        setAndReturn();
+                        if (id) {
+                            /**
+                             * If timestamp is expired, update timestamp to show refreshing '1'
+                             * and start fetching the new data to compare with.
+                             */
+                            cache.get(oldCacheKey).then(function(result) {
+                                if (result) {
+                                    result = flat.unflatten(result);
+                                    result.isRefreshing = doBackgroundFech && !!id;
+                                    if (result.isRefreshing) {
+                                        /**
+                                         * Update the profile timestamp to include that it is being refreshed
+                                         */
+                                        cache.set(cacheKey, undefined, function(callback) {
+                                            callback(undefined, [id, 1].join('|'));
+                                        }).then(function() {
+                                            globalResolve('resolve', result, resolve, callback);
+                                        }, function(error) {
+                                            globalReject('isRefreshing set error', error, reject, callback);
+                                        });
+                                    } else {
+                                        globalResolve('resolve', result, resolve, callback);
+                                    }
+                                }
+
+                                /**
+                                 * Fetch new data and is !!result then do a comparison against old data
+                                 */
+                                setAndReturn(id, doBackgroundFech && !!id, result);
+                            });
+                        } else {
+                            /**
+                             * Data doesn't exist even though cacheKey does. 
+                             * Go ahead and do a sync load of the new data.
+                             */
+                            setAndReturn();
+                        }
                     }
                 }, function(error) {
                     globalReject('getOrSet get', error, reject, callback);
                 });
             } else {
+                /**
+                 * cacheKey is complete and should return data not an ID.
+                 */
                 cache.get(cacheKey).then(function(result) {
                     if (result) {
                         globalResolve('resolve', flat.unflatten(result), resolve, callback);
@@ -82,24 +152,58 @@ var cache = {
                 });
             }
 
-            function setAndReturn() {
-                fn(function(error, data, id) {
-                    cache.set(`${cacheKey}${id ? ':' + id : ''}`, timeout, function(dataCallback) {
-                        dataCallback(undefined, flat.flatten(data));
+            function setAndReturn(oldTimestamp, blockResolve, oldData) {
+                var innerResolve = blockResolve ? undefined : resolve,
+                    innerReject = blockResolve ? undefined : reject,
+                    innerCallback = blockResolve ? undefined : callback;
+
+                if (blockResolve) {
+                    console.log('Background fetching', cacheKey);
+                }
+
+                /**
+                 * fn is what gets passed into the cache manager and is actually what loads and returns data.
+                 */
+                fn(function(error, data) {
+                    /**
+                     * Determine if the data returned is unique or duplicate to old data
+                     */
+                    var isNew = !oldData || newCheck(oldData, data);
+
+                    /**
+                     * This does 1 of 2 things:
+                     * 1) If new data it adds the data to the cache and then returns it
+                     * 2) If data is not new it updates the lastChecked timestamp of the old data and updates the cacheKey with the lastChecked timestamp.
+                     */
+                    cache.set(`${cacheKey}:${isNew ? data.timestamp : oldTimestamp}`, undefined, function(dataCallback) {
+                        if (isNew) {
+                            // If data is new then return the data with lastChecked being set to the timestamp
+                            data.lastChecked = data.timestamp;
+                            dataCallback(undefined, flat.flatten(data));
+                        } else {
+                            // If data is duplicated by old data, just update the lastChecked to the timestamp
+                            dataCallback(undefined, 'lastChecked', data.timestamp);
+                        }
                     }).then(function(result) {
-                        if (result) {
-                            cache.set(`${cacheKey}`, timeout, function(dataCallback) {
-                                dataCallback(null, id);
+                        if (isLookup) {
+                            /**
+                             * If using a lookup table, the timestamp of the last check needs to be inserted
+                             * so that we know if our data needs to be rechecked in the future.
+                             */
+                            cache.set(`${cacheKey}`, undefined, function(dataCallback) {
+                                // Build the lookup table value which is ID|LAST_CHECKED
+                                dataCallback(null, isNew ? data.timestamp : [oldTimestamp, data.timestamp].join('|'));
                             }).then(function(result) {
-                                globalResolve('resolve', data, resolve, callback);
+                                globalResolve('resolve', data, innerResolve, innerCallback);
                             }, function(error) {
-                                globalReject('setAndReturn set', error, reject, callback);
+                                globalReject('setAndReturn set', error, innerReject, innerCallback);
                             });
                         } else {
-                            globalResolve('resolve', data, resolve, callback);
+                            // If not lookup table then just return the item
+                            globalResolve('resolve', data, innerResolve, innerCallback);
                         }
                     }, function(error) {
-                        globalReject('setAndReturn', error, reject, callback);
+                        globalReject('setAndReturn', error, innerReject, innerCallback);
                     })
                 });
             }
@@ -124,13 +228,33 @@ var cache = {
         var client = db.getClient();
 
         return new Promise(function(resolve, reject) {
-            fn(function(fnErr, data) {
+            fn(function(fnErr, property, value) {
+                var args = [cacheKey, property, value],
+                    method = 'setAsync';
+
                 if (fnErr) {
                     globalReject('setFn', fnErr, reject, callback);
                     return;
                 }
 
-                client[typeof data === 'object' ? 'hmsetAsync' : 'setAsync'](cacheKey, data).then(function(data) {
+                if (value == undefined) {
+                    args.pop();
+                }
+
+                if (typeof property === 'object') {
+                    method = 'hmsetAsync';
+                } else if (typeof property === 'string' && value !== undefined) {
+                    method = 'hsetAsync';
+                }
+
+                console.log('set',
+                    cacheKey,
+                    method,
+                    typeof property === 'object' ? 'Object' : property,
+                    typeof value === 'object' ? 'Object' : value
+                );
+
+                client[method].apply(client, args).then(function(data) {
                     globalResolve('resolve', data, resolve, callback);
                 }, function(error) {
                     globalReject('set', error, reject, callback);

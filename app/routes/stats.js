@@ -27,6 +27,7 @@ function ucwords(str) {
 
 import parse from '../parser/profile';
 import cache from '../cache';
+import deepEqual from 'deep-equal';
 
 /**
  * @api {get} /stats/:platform/:region/:tag Get profile of player.
@@ -46,6 +47,8 @@ import cache from '../cache';
     {
       username: "user",
       timestamp: "1486762656854",
+      lastChecked: "1486762656854",
+      isRefreshing: false,
       stats: {
         competitive: {
           featured: {...},
@@ -67,15 +70,14 @@ router.get('/:platform/:region/:tag', (req, res) => {
     const tag = req.params.tag;
     const hero = (req.query.hero || '').toLowerCase();
 
-    if(platform === 'psn' || platform === 'xbl') {
+    if (platform === 'psn' || platform === 'xbl') {
         region = 'global';
     }
 
-    // const cacheKey = `profile_${platform}_${region}_${tag}`;
     const cacheKey = `Stats:Profiles:${tag}:${platform}:${region}`;
     const timeout = 60 * 5 * 1000; // 5 minutes.
 
-    cache.getOrSet(cacheKey, timeout, getStats, true, function(err, data) {
+    cache.getOrSet(cacheKey, timeout, getStats, isNewProfile, true, function(err, data) {
         var heroName = hero && heroes.indexOf(hero) !== -1 ? (heroMap[hero] || hero) : undefined;
 
         if (err) {
@@ -87,6 +89,8 @@ router.get('/:platform/:region/:tag', (req, res) => {
             res.json({
                 username: data.username,
                 timestamp: data.timestamp,
+                lastChecked: data.lastChecked,
+                isRefreshing: data.isRefreshing,
                 hero: {
                     name: heroName,
                     quickplay: data.stats.quickplay.careerStats[heroName],
@@ -97,6 +101,8 @@ router.get('/:platform/:region/:tag', (req, res) => {
             res.json({
                 username: data.username,
                 timestamp: data.timestamp,
+                lastChecked: data.lastChecked,
+                isRefreshing: data.isRefreshing,
                 stats: data.stats
             });
         }
@@ -112,6 +118,33 @@ router.get('/:platform/:region/:tag', (req, res) => {
                 callback(err);
             }
         });
+    }
+
+    function isNewProfile(oldData, newData) {
+        var isNew = false,
+            oldCompetitiveStats,
+            oldQuickplayStats,
+            newCompetitiveStats,
+            newQuickplayStats,
+            isQuickplayChanged,
+            isCompetitiveChanged;
+
+        try {
+            oldCompetitiveStats = oldData.stats.competitive.careerStats.allHeroes;
+            newCompetitiveStats = newData.stats.competitive.careerStats.allHeroes;
+            oldQuickplayStats = oldData.stats.quickplay.careerStats.allHeroes;
+            newQuickplayStats = newData.stats.quickplay.careerStats.allHeroes;
+            isQuickplayChanged = !deepEqual(oldQuickplayStats, newQuickplayStats);
+            isCompetitiveChanged = !deepEqual(oldCompetitiveStats, newCompetitiveStats);
+
+            isNew = isQuickplayChanged || isCompetitiveChanged;
+
+            console.log('Comparing', isNew, oldData.timestamp, newData.timestamp, isQuickplayChanged, isCompetitiveChanged);
+        } catch (e) {
+            console.log('Error comparing data', e);
+        }
+
+        return isNew;
     }
 });
 
