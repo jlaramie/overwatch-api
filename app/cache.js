@@ -45,8 +45,8 @@ var cache = {
                     var time = Date.now();
 
                     timestamp = timestamp ? parseInt(timestamp, 10) : timestamp;
-
-                    if (timestamp && timestamp + timeout < time) {
+                    console.log('getOrSet', cacheKey, timestamp, timeout, time, timestamp + timeout > time);
+                    if (timestamp && timestamp + timeout > time) {
                         cache.get(`${cacheKey}:${timestamp}`).then(function(result) {
                             if (result) {
                                 globalResolve('resolve', flat.unflatten(result), resolve, callback);

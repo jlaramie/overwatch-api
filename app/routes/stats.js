@@ -4,7 +4,6 @@ const heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo', 'junkrat', 'lucio', '
 const heroMap = {
     soldier76: 'soldier:76',
     torbjorn: 'torbjörn',
-    dva: 'd.va',
     lucio: 'lúcio'
 };
 

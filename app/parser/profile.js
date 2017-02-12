@@ -240,7 +240,7 @@ module.exports = function(platform, region, tag, cb) {
                         }).get();
 
                     groups.forEach(function(group) {
-                        stats[group.key] = getCategoryStats(mode, group);
+                        stats[group.key.replace('.', '')] = getCategoryStats(mode, group);
                     });
 
                     return stats;
