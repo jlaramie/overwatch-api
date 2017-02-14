@@ -127,7 +127,8 @@ router.get('/:platform/:region/:tag', (req, res) => {
             newCompetitiveStats,
             newQuickplayStats,
             isQuickplayChanged,
-            isCompetitiveChanged;
+            isCompetitiveChanged,
+            isRankChanged;
 
         try {
             oldCompetitiveStats = oldData.stats.competitive.careerStats.allHeroes;
@@ -136,8 +137,9 @@ router.get('/:platform/:region/:tag', (req, res) => {
             newQuickplayStats = newData.stats.quickplay.careerStats.allHeroes;
             isQuickplayChanged = !deepEqual(oldQuickplayStats, newQuickplayStats);
             isCompetitiveChanged = !deepEqual(oldCompetitiveStats, newCompetitiveStats);
+            isRankChanged = newData.profile.competitive.rank && oldData.profile.competitive.rank !== newData.profile.competitive.rank;
 
-            isNew = isQuickplayChanged || isCompetitiveChanged;
+            isNew = isRankChanged || isQuickplayChanged || isCompetitiveChanged;
 
             console.log('Comparing', isNew, oldData.timestamp, newData.timestamp, isQuickplayChanged, isCompetitiveChanged);
         } catch (error) {
