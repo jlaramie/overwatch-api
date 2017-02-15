@@ -3,7 +3,7 @@
 var Promise = require('promise'),
     db = require('./db/adapter/redis.js'),
     flat = require('flat'),
-    doBackgroundFech = true;
+    doBackgroundFech = false;
 
 function globalReject(name, error, reject, callback) {
     if (error) {
@@ -108,27 +108,29 @@ var cache = {
                             cache.get(oldCacheKey).then(function(result) {
                                 if (result) {
                                     result = flat.unflatten(result);
-                                    result.isRefreshing = doBackgroundFech && !!id;
-                                    if (result.isRefreshing) {
-                                        /**
-                                         * Update the profile timestamp to include that it is being refreshed
-                                         */
-                                        cache.set(cacheKey, undefined, function(callback) {
-                                            callback(undefined, [id, 1].join('|'));
-                                        }).then(function() {
+                                    if (doBackgroundFech) {
+                                        result.isRefreshing = doBackgroundFech && !!id;
+                                        if (result.isRefreshing) {
+                                            /**
+                                             * Update the profile timestamp to include that it is being refreshed
+                                             */
+                                            cache.set(cacheKey, undefined, function(callback) {
+                                                callback(undefined, [id, 1].join('|'));
+                                            }).then(function() {
+                                                globalResolve('resolve', result, resolve, callback);
+                                            }, function(error) {
+                                                globalReject('isRefreshing set error', error, reject, callback);
+                                            });
+                                        } else {
                                             globalResolve('resolve', result, resolve, callback);
-                                        }, function(error) {
-                                            globalReject('isRefreshing set error', error, reject, callback);
-                                        });
-                                    } else {
-                                        globalResolve('resolve', result, resolve, callback);
+                                        }
                                     }
                                 }
 
                                 /**
                                  * Fetch new data and is !!result then do a comparison against old data
                                  */
-                                setAndReturn(id, doBackgroundFech && !!id, result);
+                                setAndReturn(id, doBackgroundFech && !!id);
                             });
                         } else {
                             /**
