@@ -99,7 +99,7 @@ module.exports = function(platform, region, tag, cb) {
                     avatarImg: $('.player-portrait').attr('src'),
                     games: {
                         quickplay: {
-                            wins: stats.quickplay.careerStats.allHeroes.game.gamesWon
+                            wins: stats.quickplay.careerStats.allHeroes ? stats.quickplay.careerStats.allHeroes.game.gamesWon : 0
                         },
                         competitive: {
                             wins: stats.competitive.careerStats.allHeroes.game.gamesWon,
@@ -109,7 +109,7 @@ module.exports = function(platform, region, tag, cb) {
                         }
                     },
                     playtime: {
-                        quickplay: stats.quickplay.careerStats.allHeroes.game.timePlayed,
+                        quickplay: stats.quickplay.careerStats.allHeroes ? stats.quickplay.careerStats.allHeroes.game.timePlayed : 0,
                         competitive: stats.competitive.careerStats.allHeroes.game.timePlayed
                     },
                     competitive: {
@@ -309,6 +309,7 @@ module.exports = function(platform, region, tag, cb) {
                 reject(e);
             }
         }).catch(err => {
+            console.log('Profile Parser Error', err.stack);
             cb && cb(err);
             reject(err);
         });
