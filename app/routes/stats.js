@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo', 'junkrat', 'lucio', 'mccree', 'mei', 'mercy', 'pharah', 'reaper', 'reinhardt', 'roadhog', 'solder76', 'sombra', 'symmetra', 'torbjorn', 'tracer', 'widowmaker', 'winston', 'zarya', 'zenyatta'];
+const heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo', 'junkrat', 'lucio', 'mccree', 'mei', 'mercy', 'pharah', 'reaper', 'reinhardt', 'roadhog', 'soldier76', 'sombra', 'symmetra', 'torbjorn', 'tracer', 'widowmaker', 'winston', 'zarya', 'zenyatta'];
 const heroMap = {
     soldier76: 'soldier:76',
     torbjorn: 'torbjörn',
@@ -79,6 +79,8 @@ router.get('/:platform/:region/:tag', (req, res) => {
 
     cache.getOrSet(cacheKey, timeout, getStats, isNewProfile, true, function(error, data) {
         var heroName = hero && heroes.indexOf(hero) !== -1 ? (heroMap[hero] || hero) : undefined;
+
+        console.log('hero name', heroName);
 
         if (error) {
             console.log(`Error retrieving profile for ${tag} ${platform} ${region}`, error.name, error.statusCode);
