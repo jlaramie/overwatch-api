@@ -34,7 +34,7 @@ function formatValue(value) {
     // Strip out commas
     value = value.replace(/,/g, '');
 
-    var timeStrings = ['seconds', 'minutes', 'hours', 'days'],
+    var timeStrings = ['second', 'seconds', 'minute', 'minutes', 'hour', 'hours', 'day', 'days', 'week', 'weeks'],
         parts = value.split(' ');
 
     if (value.indexOf(':') !== -1) {
