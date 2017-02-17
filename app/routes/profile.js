@@ -79,7 +79,7 @@ router.get('/:platform/:region/:tag', (req, res) => {
                 username: data.username,
                 timestamp: data.timestamp,
                 lastChecked: data.lastChecked,
-                isRefreshing: data.isRefreshing,
+                // isRefreshing: data.isRefreshing,
                 profile: data.profile
             });
         }
@@ -105,16 +105,22 @@ router.get('/:platform/:region/:tag', (req, res) => {
             newQuickplayStats,
             isQuickplayChanged,
             isCompetitiveChanged,
-            isRankChanged;
+            isRankChanged,
+            oldComp = oldData.stats.competitive,
+            newComp = newData.stats.competitive,
+            oldQuick = oldData.stats.quickplay,
+            newQuick = newData.stats.quickplay,
+            oldRank = oldData.profile.competitive ? oldData.profile.competitive.rank : 0,
+            newRank = newData.profile.competitive ? newData.profile.competitive.rank : 0;
 
         try {
-            oldCompetitiveStats = oldData.stats.competitive.careerStats.allHeroes;
-            newCompetitiveStats = newData.stats.competitive.careerStats.allHeroes;
-            oldQuickplayStats = oldData.stats.quickplay.careerStats.allHeroes;
-            newQuickplayStats = newData.stats.quickplay.careerStats.allHeroes;
+            oldCompetitiveStats = oldComp && oldComp.careerStats ? oldComp.careerStats.allHeroes : undefined;
+            newCompetitiveStats = newComp && newComp.careerStats ? newComp.careerStats.allHeroes : undefined;
+            oldQuickplayStats = oldQuick && oldQuick.careerStats ? oldQuick.careerStats.allHeroes : undefined;
+            newQuickplayStats = newQuick && newQuick.careerStats ? newQuick.careerStats.allHeroes : undefined;
             isQuickplayChanged = !deepEqual(oldQuickplayStats, newQuickplayStats);
             isCompetitiveChanged = !deepEqual(oldCompetitiveStats, newCompetitiveStats);
-            isRankChanged = newData.profile.competitive.rank && oldData.profile.competitive.rank !== newData.profile.competitive.rank;
+            isRankChanged = oldRank !== newRank;
 
             isNew = isRankChanged || isQuickplayChanged || isCompetitiveChanged;
 

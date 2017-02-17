@@ -3,6 +3,7 @@ const rp = require('request-promise');
 const Promise = require('promise');
 const trim = require('trim');
 const moment = require('moment');
+const _ = require('underscore');
 const Utilities = require('../utilities');
 
 function toCamelCase(str) {
@@ -55,15 +56,15 @@ function formatValue(value) {
 
 function getHeroImage(guid) {
     try {
-    if (guid === '0x02E00000FFFFFFFF') {
-        // Empty guid
-        return '';
-    }
+        if (guid === '0x02E00000FFFFFFFF') {
+            // Empty guid
+            return '';
+        }
 
-    return `https://blzgdapipro-a.akamaihd.net/game/heroes/small/${guid}.png`;
-    } catch(e) {
-                            console.log(e);
-                        }
+        return `https://blzgdapipro-a.akamaihd.net/game/heroes/small/${guid}.png`;
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 // export default function(platform, region, tag, cb) {
@@ -94,27 +95,37 @@ module.exports = function(platform, region, tag, cb) {
                         careerStats: getCareerStats('quickplay')
                     }
                 };
+
+                /**
+                 * Since some people don't have quickplay and/or competitve stats I added checks to handle this.
+                 * Redis hates empty objects and hates undefined
+                 */
+                Object.keys(stats).forEach(function(mode) {
+                    Object.keys(stats[mode]).forEach(function(category) {
+                        if (_.isEmpty(stats[mode][category])) {
+                            delete stats[mode][category];
+                        }
+                    });
+                    if (_.isEmpty(stats[mode])) {
+                        delete stats[mode];
+                    }
+                });
+
                 const profile = {
                     username: user,
                     avatarImg: $('.player-portrait').attr('src'),
                     games: {
                         quickplay: {
-                            wins: stats.quickplay.careerStats.allHeroes ? stats.quickplay.careerStats.allHeroes.game.gamesWon : 0
-                        },
-                        competitive: {
-                            wins: stats.competitive.careerStats.allHeroes.game.gamesWon,
-                            lost: stats.competitive.careerStats.allHeroes.miscellaneous.gamesLost,
-                            tied: stats.competitive.careerStats.allHeroes.miscellaneous.gamesTied,
-                            winPercentage: (stats.competitive.careerStats.allHeroes.game.gamesWon / stats.competitive.careerStats.allHeroes.game.gamesPlayed) * 100
+                            wins: stats.quickplay.careerStats ? stats.quickplay.careerStats.allHeroes.game.gamesWon : 0
                         }
                     },
                     playtime: {
-                        quickplay: stats.quickplay.careerStats.allHeroes ? stats.quickplay.careerStats.allHeroes.game.timePlayed : 0,
-                        competitive: stats.competitive.careerStats.allHeroes.game.timePlayed
+                        quickplay: stats.quickplay.careerStats ? stats.quickplay.careerStats.allHeroes.game.timePlayed : 0,
+                        competitive: stats.competitive.careerStats ? stats.competitive.careerStats.allHeroes.game.timePlayed : 0
                     },
                     competitive: {
                         rank: parseInt($('.competitive-rank div').first().text(), 10),
-                        rankImg: $('.competitive-rank img').attr('src')
+                        rankImg: $('.competitive-rank img').attr('src') || ''
                     },
                     level: parseInt($('.player-level .u-vertical-center').first().text(), 10),
                     levelFrameImg: $('.player-level').attr('style').slice(21, 109),
@@ -122,6 +133,21 @@ module.exports = function(platform, region, tag, cb) {
                     prestige: 0,
                     levelFull: 0
                 };
+
+                if (stats.competitive.careerStats) {
+                    profile.games.competitive = {
+                        wins: stats.competitive.careerStats.allHeroes.game.gamesWon,
+                        lost: stats.competitive.careerStats.allHeroes.miscellaneous.gamesLost,
+                        tied: stats.competitive.careerStats.allHeroes.miscellaneous.gamesTied,
+                        winPercentage: (stats.competitive.careerStats.allHeroes.game.gamesWon / stats.competitive.careerStats.allHeroes.game.gamesPlayed) * 100
+                    };
+                }
+
+                // If user has not played competitve they will have no rank and no rankImg
+                if (_.isNaN(profile.competitive.rank)) {
+                    delete profile.competitive;
+                }
+
                 profile.prestige = profile.starImg ? Utilities.getPrestige(profile.starImg.match(/0x([0-9a-f]*)/i)[0]) : 0;
                 profile.levelFull = (profile.prestige * 100) + profile.level;
                 /**
