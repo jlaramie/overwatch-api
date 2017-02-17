@@ -130,7 +130,7 @@ var cache = {
                                 /**
                                  * Fetch new data and is !!result then do a comparison against old data
                                  */
-                                setAndReturn(id, doBackgroundFech && !!id);
+                                setAndReturn(id, doBackgroundFech && !!id, result);
                             });
                         } else {
                             /**
