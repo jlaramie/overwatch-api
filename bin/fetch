@@ -1,6 +1,6 @@
 #! /app/.heroku/node/bin/node
 var startTime = Date.now(),
-    endTime = startTime + (9 * 60 * 1000),
+    endTime = startTime + (5 * 60 * 1000),
     db = require('../app/db/adapter/redis'),
     _ = require('underscore'),
     flat = require('flat'),

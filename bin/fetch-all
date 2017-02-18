@@ -1,13 +1,6 @@
 #! /app/.heroku/node/bin/node
 var startTime = Date.now(),
-    endTime = startTime + (9 * 60 * 1000),
-    db = require('../app/db/adapter/redis'),
-    _ = require('underscore'),
-    flat = require('flat'),
-    parse = require('../app/parser/profile'),
-    cache = require('../app/cache'),
-    deepEqual = require('deep-equal'),
-    cacheTime = timeout = 60 * 5 * 1000; // 5 minutes.
+    db = require('../app/db/adapter/redis');
 
 db.init({
     redis_url: process.env.REDIS_URL
