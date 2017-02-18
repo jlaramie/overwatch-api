@@ -1,0 +1,52 @@
+#! /app/.heroku/node/bin/node
+var startTime = Date.now(),
+    endTime = startTime + (9 * 60 * 1000),
+    db = require('../app/db/adapter/redis'),
+    _ = require('underscore'),
+    flat = require('flat'),
+    parse = require('../app/parser/profile'),
+    cache = require('../app/cache'),
+    deepEqual = require('deep-equal'),
+    cacheTime = timeout = 60 * 5 * 1000; // 5 minutes.
+
+db.init({
+    redis_url: process.env.REDIS_URL
+}).then(onInit);
+
+function onInit(client) {
+    var commandsToRun;
+
+    console.log('Running Profile Fetch All');
+
+    commandsToRun = [
+        ['scan', 0, 'match', 'Stats:Profiles:*:*:global', 'count', 10000],
+        ['scan', 0, 'match', 'Stats:Profiles:*:*:us', 'count', 10000],
+        ['scan', 0, 'match', 'Stats:Profiles:*:*:eu', 'count', 10000],
+        ['scan', 0, 'match', 'Stats:Profiles:*:*:kr', 'count', 10000]
+    ];
+
+    client.multi(commandsToRun).execAsync().then(function(results) {
+        var accountsToFetch = [];
+
+        results.forEach(function(scanResult) {
+            scanResult[1].forEach(function(key) {
+                accountsToFetch.push(key.replace('Stats:Profiles:', ''));
+            });
+        });
+
+        client.saddAsync('Queue:Profiles', accountsToFetch).then(function(results) {
+            end(results);
+        });
+    });
+}
+
+function onError(e) {
+    console.log('Error');
+    end();
+}
+
+function end(results) {
+    var endTime = Date.now();
+    console.log.apply(console, [(endTime - startTime) / 1000].concat(arguments));
+    process.exit();
+}
