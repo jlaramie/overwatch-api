@@ -24,7 +24,6 @@ import deepEqual from 'deep-equal';
       username: "user",
       timestamp: "1486762656854",
       lastChecked: "1486762656854",
-      isRefreshing: false,
       profile: {
         avatar: "https://blzgdapipro-a.akamaihd.net/game/unlocks/0x0250000000000EFD.png",
         games: {
@@ -65,22 +64,25 @@ router.get('/:platform/:region/:tag', (req, res) => {
         region = 'global';
     }
 
-    const cacheKey = `Stats:Profiles:${tag}:${platform}:${region}`;
+    const cacheKey = `${tag}:${platform}:${region}`;
     const timeout = 60 * 5 * 1000; // 5 minutes.
 
-    cache.getOrSet(cacheKey, timeout, getProfile, isNewProfile, true, function(error, data) {
+    cache.getOrSet('Stats:Profiles', cacheKey, timeout, getProfile, isNewProfile, true, 'Queue:Profiles', function(error, data) {
         if (error) {
             console.log(`Error retrieving profile for ${tag} ${platform} ${region}`, error.name, error.statusCode);
             res.status(500).json({
                 error: `Error retrieving profile for ${tag} ${platform} ${region}`
             });
-        } else {
+        } else if (data) {
             res.json({
                 username: data.username,
                 timestamp: data.timestamp,
                 lastChecked: data.lastChecked,
-                // isRefreshing: data.isRefreshing,
                 profile: data.profile
+            });
+        } else {
+            res.status(404).json({
+                error: `Profile has been added to the queue for ${tag} ${platform} ${region}`
             });
         }
     });

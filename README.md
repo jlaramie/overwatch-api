@@ -83,7 +83,14 @@ Generate docs with the `--docs app/routes` flag.
 See [srv](https://github.com/alfg/srv) documentation for more info on srv specific options.
 
 ## License
-MIT
+GPL 2.0
+
+## Heroku Setup
+heroku addons:docs scheduler
+https://scheduler.heroku.com/dashboard
+git push heroku master
+heroku ps:scale web=0 worker=0
+web: node --inspect --debug-brk node_modules/srv-cli/build/srv app/index.js --docs app/routes
 
 
 https://playoverwatch.com/en-us/career/get-platforms/53800040

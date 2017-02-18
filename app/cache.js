@@ -3,7 +3,7 @@
 var Promise = require('promise'),
     db = require('./db/adapter/redis.js'),
     flat = require('flat'),
-    doBackgroundFech = false;
+    doBackgroundFech = true;
 
 function globalReject(name, error, reject, callback) {
     if (error) {
@@ -55,7 +55,7 @@ var cache = {
      * @param {boolean} isLookup - First check as a generic key value and use that value for a final lookup and/or set.
      * @param {Function} callback - Callback function to send back data or value.
      */
-    getOrSet: function(cacheKey, timeout, fn, newCheck, isLookup, callback) {
+    getOrSet: function(cacheKeyPrefix, cacheKey, timeout, fn, newCheck, isLookup, queueKey, callback) {
         var client = db.getClient();
 
         return new Promise(function(resolve, reject) {
@@ -64,7 +64,7 @@ var cache = {
                  * isLookup tells us that the cacheKey is just the first part and that we need to retrieve
                  * the most recent id from a lookup.
                  */
-                client.getAsync(cacheKey).then(function(timestamps) {
+                client.getAsync(`${cacheKeyPrefix}:${cacheKey}`).then(function(timestamps) {
                     var time = Date.now(),
                         id,
                         oldCacheKey,
@@ -82,10 +82,10 @@ var cache = {
                     timestamps = timestamps ? timestamps.split('|') : timestamps;
                     timestamp = timestamps ? parseInt(timestamps[timestamps.length - 1], 10) : timestamps;
                     id = timestamps ? parseInt(timestamps[0]) : timestamp;
-                    oldCacheKey = `${cacheKey}:${id}`;
-                    console.log('getOrSet', cacheKey, id, timestamp, timeout, time, timestamp + timeout > time);
+                    oldCacheKey = `${cacheKeyPrefix}:${cacheKey}:${id}`;
+                    console.log('getOrSet', oldCacheKey, id, timestamp, timeout, time, timestamp + timeout > time);
 
-                    if (timestamp && (timestamp === 1 || timestamp + timeout > time)) {
+                    if (timestamp && (timestamp === 1 || timestamp + timeout > time) && !!queueKey) {
                         /**
                          * If timestamp is not expired or timestamp is currently being refreshed,
                          * return the current data.
@@ -93,7 +93,6 @@ var cache = {
                         cache.get(oldCacheKey).then(function(result) {
                             if (result) {
                                 result = flat.unflatten(result);
-                                result.isRefreshing = false;
                                 globalResolve('resolve', result, resolve, callback);
                             } else {
                                 setAndReturn();
@@ -108,29 +107,27 @@ var cache = {
                             cache.get(oldCacheKey).then(function(result) {
                                 if (result) {
                                     result = flat.unflatten(result);
-                                    if (doBackgroundFech) {
-                                        result.isRefreshing = doBackgroundFech && !!id;
-                                        if (result.isRefreshing) {
-                                            /**
-                                             * Update the profile timestamp to include that it is being refreshed
-                                             */
-                                            cache.set(cacheKey, undefined, function(callback) {
-                                                callback(undefined, [id, 1].join('|'));
-                                            }).then(function() {
-                                                globalResolve('resolve', result, resolve, callback);
-                                            }, function(error) {
-                                                globalReject('isRefreshing set error', error, reject, callback);
-                                            });
-                                        } else {
-                                            globalResolve('resolve', result, resolve, callback);
-                                        }
-                                    }
                                 }
 
-                                /**
-                                 * Fetch new data and is !!result then do a comparison against old data
-                                 */
-                                setAndReturn(id, doBackgroundFech && !!id, result);
+                                if (doBackgroundFech && queueKey) {
+                                    client.saddAsync(queueKey, cacheKey).then(function(queueResult) {
+                                        globalResolve('resolve', result, resolve, callback);
+                                    }, function(error) {
+                                        globalReject('isRefreshing set error', error, reject, callback);
+                                    });
+                                } else {
+                                    /**
+                                     * Fetch new data and is !!result then do a comparison against old data
+                                     */
+                                    setAndReturn(id, result);
+                                }
+                            });
+                        } else if (doBackgroundFech && queueKey) {
+                            console.log(`Adding ${cacheKey} to ${queueKey}`);
+                            client.saddAsync(queueKey, cacheKey).then(function(queueResult) {
+                                globalResolve('resolve', undefined, resolve, callback);
+                            }, function(error) {
+                                globalReject('isRefreshing set error', error, reject, callback);
                             });
                         } else {
                             /**
@@ -158,14 +155,10 @@ var cache = {
                 });
             }
 
-            function setAndReturn(oldTimestamp, blockResolve, oldData) {
-                var innerResolve = blockResolve ? undefined : resolve,
-                    innerReject = blockResolve ? undefined : reject,
-                    innerCallback = blockResolve ? undefined : callback;
-
-                if (blockResolve) {
-                    console.log('Background fetching', cacheKey);
-                }
+            function setAndReturn(oldTimestamp, oldData) {
+                var innerResolve = resolve,
+                    innerReject = reject,
+                    innerCallback = callback;
 
                 /**
                  * fn is what gets passed into the cache manager and is actually what loads and returns data.
@@ -186,7 +179,7 @@ var cache = {
                      * 1) If new data it adds the data to the cache and then returns it
                      * 2) If data is not new it updates the lastChecked timestamp of the old data and updates the cacheKey with the lastChecked timestamp.
                      */
-                    cache.set(`${cacheKey}:${isNew ? data.timestamp : oldTimestamp}`, undefined, function(dataCallback) {
+                    cache.set(`${cacheKeyPrefix}:${cacheKey}:${isNew ? data.timestamp : oldTimestamp}`, undefined, function(dataCallback) {
                         if (isNew) {
                             // If data is new then return the data with lastChecked being set to the timestamp
                             data.lastChecked = data.timestamp;
@@ -201,7 +194,7 @@ var cache = {
                              * If using a lookup table, the timestamp of the last check needs to be inserted
                              * so that we know if our data needs to be rechecked in the future.
                              */
-                            cache.set(`${cacheKey}`, undefined, function(dataCallback) {
+                            cache.set(`${cacheKeyPrefix}:${cacheKey}`, undefined, function(dataCallback) {
                                 // Build the lookup table value which is ID|LAST_CHECKED
                                 dataCallback(null, isNew ? data.timestamp : [oldTimestamp, data.timestamp].join('|'));
                             }).then(function(result) {

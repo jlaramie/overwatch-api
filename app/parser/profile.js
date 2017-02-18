@@ -335,7 +335,9 @@ module.exports = function(platform, region, tag, cb) {
                 reject(e);
             }
         }).catch(err => {
-            console.log('Profile Parser Error', err.stack);
+            if (err.statusCode !== 404) {
+                console.log('Profile Parser Error', err.stack);
+            }
             cb && cb(err);
             reject(err);
         });

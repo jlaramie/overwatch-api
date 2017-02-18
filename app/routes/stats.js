@@ -48,7 +48,6 @@ import deepEqual from 'deep-equal';
       username: "user",
       timestamp: "1486762656854",
       lastChecked: "1486762656854",
-      isRefreshing: false,
       stats: {
         competitive: {
           featured: {...},
@@ -74,10 +73,10 @@ router.get('/:platform/:region/:tag', (req, res) => {
         region = 'global';
     }
 
-    const cacheKey = `Stats:Profiles:${tag}:${platform}:${region}`;
+    const cacheKey = `${tag}:${platform}:${region}`;
     const timeout = 60 * 5 * 1000; // 5 minutes.
 
-    cache.getOrSet(cacheKey, timeout, getStats, isNewProfile, true, function(error, data) {
+    cache.getOrSet('Stats:Profiles', cacheKey, timeout, getStats, isNewProfile, true, 'Queue:Profiles', function(error, data) {
         var heroName = hero && heroes.indexOf(hero) !== -1 ? (heroMap[hero] || hero) : undefined,
             response;
 
@@ -86,31 +85,35 @@ router.get('/:platform/:region/:tag', (req, res) => {
             res.status(500).json({
                 error: `Error retrieving profile for ${tag} ${platform} ${region}`
             });
-        } else if (heroName) {
-            response = {
-                username: data.username,
-                timestamp: data.timestamp,
-                lastChecked: data.lastChecked,
-                // isRefreshing: data.isRefreshing,
-                hero: {
-                    name: heroName
-                }
-            };
+        } else if (data) {
+            if (heroName) {
+                response = {
+                    username: data.username,
+                    timestamp: data.timestamp,
+                    lastChecked: data.lastChecked,
+                    hero: {
+                        name: heroName
+                    }
+                };
 
-            // Populate stats that are available
-            Object.keys(data.stats).forEach(function(mode) {
-                if (data.stats[mode] && data.stats[mode].careerStats) {
-                    response.hero[mode] = data.stats[mode].careerStats[heroName];
-                }
-            });
+                // Populate stats that are available
+                Object.keys(data.stats).forEach(function(mode) {
+                    if (data.stats[mode] && data.stats[mode].careerStats) {
+                        response.hero[mode] = data.stats[mode].careerStats[heroName];
+                    }
+                });
+            } else {
+                response = {
+                    username: data.username,
+                    timestamp: data.timestamp,
+                    lastChecked: data.lastChecked,
+                    stats: data.stats
+                };
+            }
         } else {
-            response = {
-                username: data.username,
-                timestamp: data.timestamp,
-                lastChecked: data.lastChecked,
-                // isRefreshing: data.isRefreshing,
-                stats: data.stats
-            };
+            res.status(404).json({
+                error: `Profile has been added to the queue for ${tag} ${platform} ${region}`
+            });
         }
         res.json(response);
     });
