@@ -1,3 +1,3 @@
 module.exports = {
-    profile: require('./app/parser/profile')
+    data: require('./app/parser/profile')
 };

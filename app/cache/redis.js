@@ -1,7 +1,7 @@
 /* jshint esversion: 6 */
 
 var Promise = require('promise'),
-    db = require('./db/adapter/redis.js'),
+    db = require('../db/adapter/redis'),
     flat = require('flat'),
     doBackgroundFech = true;
 

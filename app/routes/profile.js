@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 import parse from '../parser/profile';
-import cache from '../cache';
+import cache from '../cache/redis';
 import deepEqual from 'deep-equal';
 
 /**
