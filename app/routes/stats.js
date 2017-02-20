@@ -26,7 +26,7 @@ function ucwords(str) {
 }
 
 import parse from '../parser/profile';
-import cache from '../cache/redis';
+import cache from '../cache/dynamodb';
 import deepEqual from 'deep-equal';
 
 /**
@@ -76,7 +76,7 @@ router.get('/:platform/:region/:tag', (req, res) => {
     const cacheKey = `${tag}:${platform}:${region}`;
     const timeout = 60 * 5 * 1000; // 5 minutes.
 
-    cache.getOrSet('Stats:Profiles', cacheKey, timeout, getStats, isNewProfile, true, 'Queue:Profiles', function(error, data) {
+    cache.getOrSet('Overwatch_Profiles', ['username', cacheKey], undefined, timeout, getData, isNewProfile, 'Queue:Profiles', function(error, data) {
         var heroName = hero && heroes.indexOf(hero) !== -1 ? (heroMap[hero] || hero) : undefined,
             response;
 
@@ -118,7 +118,7 @@ router.get('/:platform/:region/:tag', (req, res) => {
         res.json(response);
     });
 
-    function getStats(callback) {
+    function getData(callback) {
         parse(platform, region, tag).then(function(data) {
             if (callback) {
                 callback(null, data, data.timestamp);

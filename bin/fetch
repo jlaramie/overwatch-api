@@ -1,15 +1,23 @@
 #! /app/.heroku/node/bin/node
 var startTime = Date.now(),
     endTime = startTime + (5 * 60 * 1000),
-    db = require('../app/db/adapter/redis'),
+    redisDb = require('../app/db/adapter/redis'),
+    db = require('../app/db/adapter/dynamodb'),
     _ = require('underscore'),
     flat = require('flat'),
     parse = require('../app/parser/profile'),
-    cache = require('../app/cache/redis'),
+    cache = require('../app/cache/dynamodb'),
     deepEqual = require('deep-equal'),
     cacheTime = timeout = 60 * 5 * 1000; // 5 minutes.
 
 db.init({
+    aws_access_key_id: process.env.AWS_ACCESS_KEY_ID,
+    aws_secret_access_key: process.env.AWS_SECRET_ACCESS_KEY,
+    aws_region: process.env.AWS_REGION,
+    aws_url: undefined,
+});
+
+redisDb.init({
     redis_url: process.env.REDIS_URL
 }).then(onInit);
 
@@ -50,7 +58,7 @@ function processQueue(client, listKey, list) {
         try {
             if (list.length > 0 && Date.now() < endTime) {
                 key = list.pop();
-                processQueueItem(client, 'Stats:Profiles', key).then(function(result) {
+                processQueueItem(client, 'Overwatch_Profiles', key).then(function(result) {
                     results = [result];
                     client.sremAsync('Queue:Profiles', key).then(function() {
                         processQueue(client, 'Queue:Profiles', list).then(function(result) {
@@ -85,7 +93,7 @@ function processQueueItem(client, bucket, key) {
 
         try {
             console.log('processing queue item', key);
-            cache.getOrSet(bucket, key, cacheTime, getProfile.bind(null, platform, region, tag), isNewProfile, true, undefined, function(e, data) {
+            cache.getOrSet('Overwatch_Profiles', ['username', key], undefined, cacheTime, getProfile.bind(null, platform, region, tag), isNewProfile, undefined, function(e, data) {
                 console.log('processed queue item', key);
                 if (e) {
                     if(e.statusCode === 404) {

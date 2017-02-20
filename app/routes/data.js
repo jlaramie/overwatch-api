@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 import parse from '../parser/profile';
-import cache from '../cache/redis';
+import cache from '../cache/dynamodb';
 import deepEqual from 'deep-equal';
 
 /**
@@ -41,7 +41,7 @@ router.get('/:platform/:region/:tag', (req, res) => {
     const cacheKey = `${tag}:${platform}:${region}`;
     const timeout = 60 * 5 * 1000; // 5 minutes.
 
-    cache.getOrSet('Stats:Profiles', cacheKey, timeout, getProfile, isNewProfile, true, 'Queue:Profiles', function(error, data) {
+    cache.getOrSet('Overwatch_Profiles', ['username', cacheKey], undefined, timeout, getData, isNewProfile, 'Queue:Profiles', function(error, data) {
         if (error) {
             console.log(`Error retrieving profile for ${tag} ${platform} ${region}`, error.name, error.statusCode);
             res.status(500).json({
@@ -62,7 +62,7 @@ router.get('/:platform/:region/:tag', (req, res) => {
         }
     });
 
-    function getProfile(callback) {
+    function getData(callback) {
         parse(platform, region, tag).then(function(data) {
             if (callback) {
                 callback(null, data);
