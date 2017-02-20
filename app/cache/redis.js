@@ -38,7 +38,9 @@ function formatData(data) {
         Object.keys(data).forEach(function(key) {
             var numVal = parseFloat(data[key], 10);
 
-            if (numVal == data[key]) {
+            if (data[key] === undefined) {
+                delete data[key];
+            } else if (numVal == data[key]) {
                 data[key] = numVal;
             }
         });

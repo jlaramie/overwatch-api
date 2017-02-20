@@ -58,7 +58,7 @@ function getHeroImage(guid) {
     try {
         if (guid === '0x02E00000FFFFFFFF') {
             // Empty guid
-            return '';
+            return undefined;
         }
 
         return `https://blzgdapipro-a.akamaihd.net/game/heroes/small/${guid}.png`;
@@ -300,6 +300,10 @@ module.exports = function(platform, region, tag, cb) {
                         img: getHeroImage(group.id)
                     };
 
+                    if(!stats.heroDetails.img) {
+                        delete stats.heroDetails.img;
+                    }
+
                     statCategories.forEach(function(category) {
                         var $els = $(`#${mode} [data-category-id="${group.id}"] span:contains("${category}")`).closest('table').find('tbody tr'),
                             categoryStats = {},
@@ -323,7 +327,7 @@ module.exports = function(platform, region, tag, cb) {
                 }
 
                 const json = {
-                    username: user,
+                    username: `${user}:${platform}:${region}`,
                     timestamp: parseInt(moment().format('x'), 10),
                     profile: profile,
                     stats: stats,
