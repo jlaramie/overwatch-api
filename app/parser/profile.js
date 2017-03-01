@@ -148,6 +148,10 @@ module.exports = function(platform, region, tag, cb) {
                     delete profile.competitive;
                 }
 
+                if(!profile.starImg) {
+                    delete profile.starImg;
+                }
+
                 profile.prestige = profile.starImg ? Utilities.getPrestige(profile.starImg.match(/0x([0-9a-f]*)/i)[0]) : 0;
                 profile.levelFull = (profile.prestige * 100) + profile.level;
                 /**

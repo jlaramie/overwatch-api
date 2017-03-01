@@ -7,7 +7,7 @@ var Promise = require('promise'),
 
 function globalReject(name, error, reject, callback) {
     if (error) {
-        console.log(name, error.name, error.statusCode);
+        console.log(name, error.name, error.statusCode, error.error, error.message);
     } else {
         console.log(name);
     }
