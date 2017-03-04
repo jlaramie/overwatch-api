@@ -1,56 +1,60 @@
 #! /app/.heroku/node/bin/node
 var startTime = Date.now(),
     endTime = startTime + (5 * 60 * 1000),
-    redisDb = require('../app/db/adapter/redis'),
     db = require('../app/db/adapter/dynamodb'),
     _ = require('underscore'),
     flat = require('flat'),
     parse = require('../app/parser/profile'),
     cache = require('../app/cache/dynamodb'),
     deepEqual = require('deep-equal'),
-    cacheTime = timeout = 60 * 5 * 1000; // 5 minutes.
+    cacheTime = timeout = 60 * 5 * 1000, // 5 minutes.
+    lastEvaluatedKey;
 
-db.init({
+var documentClient = db.init({
     aws_access_key_id: process.env.AWS_ACCESS_KEY_ID,
     aws_secret_access_key: process.env.AWS_SECRET_ACCESS_KEY,
     aws_region: process.env.AWS_REGION,
     aws_url: undefined,
 });
 
-redisDb.init({
-    redis_url: process.env.REDIS_URL
-}).then(onInit);
+onInit(documentClient);
 
 function onInit(client) {
     console.log('Running Profile Fetch');
-    getQueue(client, 'Profiles').then(function(list) {
-        console.log('processing', list);
-        processQueue(client, 'Queue:Profiles', list).then(function(results) {
+    getQueue(client, 'Overwatch_Profiles_Queue').then(function(profiles) {
+        console.log('processing', profiles.length);
+        processQueue(client, 'Overwatch_Profiles_Queue', profiles).then(function(results) {
             end(results);
         }, onError);
     });
 }
 
-function getQueue(client, key) {
-    return new Promise(function(resolve, reject) {
-        console.log('getQueue', key);
-        try {
-            var commandsToRun = [
-                ['smembers', `Queue:${key}`]
-            ];
+function getQueue(client, tableName, lastEvaluatedKey) {
+    var profiles = [];
 
-            client.multi(commandsToRun).execAsync().then(function(replies) {
-                resolve(replies[0]);
-            }).catch(function(e) {
-                reject(e);
-            });
-        } catch (e) {
-            reject(e);
-        }
+    return new Promise(function(resolve, reject) {
+        client.scan({
+            TableName: tableName,
+            Limit: 10,
+            AttributesToGet: ['username'/*, 'timestamp'*/]
+        }).promise().then(function(result) {
+            profiles = profiles.concat(result.Items);
+            lastEvaluatedKey = result.LastEvaluatedKey;
+
+            if (false && result.Items.length > 0 && result.LastEvaluatedKey) {
+                getQueue(client, tableName, result.LastEvaluatedKey).then(function(innerResult) {
+                    profiles = profiles.concat(innerResult.Items);
+                    resolve(profiles);
+                }, reject);
+            } else {
+                resolve(profiles);
+            }
+        }, reject);
     });
 }
 
-function processQueue(client, listKey, list) {
+
+function processQueue(client, tableName, list) {
     var results;
 
     return new Promise(function(resolve, reject) {
@@ -60,8 +64,8 @@ function processQueue(client, listKey, list) {
                 key = list.pop();
                 processQueueItem(client, 'Overwatch_Profiles', key).then(function(result) {
                     results = [result];
-                    client.sremAsync('Queue:Profiles', key).then(function() {
-                        processQueue(client, 'Queue:Profiles', list).then(function(result) {
+                    client.delete({ TableName: tableName, Key: key }).promise().then(function() {
+                        processQueue(client, tableName, list).then(function(result) {
                             if (result) {
                                 results = results.concat(result);
                             }
@@ -85,7 +89,9 @@ function processQueue(client, listKey, list) {
 }
 
 function processQueueItem(client, bucket, key) {
-    var parts = key.split(':');
+    var username = key.username,
+        parts = username.split(':');
+
     return new Promise(function(resolve, reject) {
         var tag = parts[0],
             platform = parts[1],

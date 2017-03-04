@@ -83,7 +83,8 @@ var cache = {
             function setAndReturn(oldTimestamp, oldData) {
                 var innerResolve = resolve,
                     innerReject = reject,
-                    innerCallback = callback;
+                    innerCallback = callback,
+                    promises = [];
 
                 /**
                  * fn is what gets passed into the cache manager and is actually what loads and returns data.
@@ -100,6 +101,16 @@ var cache = {
                     }
 
                     /**
+                     * Adds the username to our table of usernames for easier lookups of who we are tracking
+                     */
+                    if (!oldData) {
+                        console.log('updating usernames', data.username);
+                        promises.push(cache.set('Overwatch_Profiles_Usernames', {
+                            username: data.username
+                        }));
+                    }
+
+                    /**
                      * This does 1 of 2 things:
                      * 1) If new data it adds the data to the cache and then returns it
                      * 2) If data is not new it updates the lastChecked timestamp of the old data and updates the cacheKey with the lastChecked timestamp.
@@ -107,22 +118,20 @@ var cache = {
                     if (isNew) {
                         console.log('adding entry');
                         data.lastChecked = data.timestamp;
-                        cache.set(table, data).then(function(result) {
-                            globalResolve('added entry', data, innerResolve, innerCallback);
-                        }, function(error) {
-                            globalReject('error adding entry', error, innerReject, innerCallback);
-                        })
+                        promises.push(cache.set(table, data));
                     } else {
                         console.log('updating entry', primary);
                         oldData.lastChecked = data.timestamp;
-                        cache.update(table, primary, ['timestamp', oldData.timestamp], {
+                        promises.push(cache.update(table, primary, ['timestamp', oldData.timestamp], {
                             lastChecked: data.timestamp
-                        }).then(function(result) {
-                            globalResolve('updated timestamp', oldData, innerResolve, innerCallback);
-                        }, function(error) {
-                            globalReject('update timestamp', error, innerReject, innerCallback);
-                        });
+                        }));
                     }
+
+                    Promise.all(promises).then(function() {
+                        globalResolve(isNew ? 'adding entry' : 'updating entry', isNew ? data : oldData, innerResolve, innerCallback);
+                    }, function(error) {
+                        globalReject('update profile', error, innerReject, innerCallback);
+                    });
                 });
             }
         });
@@ -179,13 +188,7 @@ var cache = {
 
         return documentClient.put({
             TableName: table,
-            Item: data,
-            Expected: {
-                timestamp: {
-                    ComparisonOperator: "NE",
-                    Value: '1487602468248'
-                }
-            }
+            Item: data
         }).promise();
     }
 };

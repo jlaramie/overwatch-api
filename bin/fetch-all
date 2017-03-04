@@ -1,40 +1,48 @@
 #! /app/.heroku/node/bin/node
 var startTime = Date.now(),
-    db = require('../app/db/adapter/redis');
+    db = require('../app/db/adapter/dynamodb');
 
-db.init({
-    redis_url: process.env.REDIS_URL
-}).then(onInit);
+var documentClient = db.init({
+    aws_access_key_id: process.env.AWS_ACCESS_KEY_ID,
+    aws_secret_access_key: process.env.AWS_SECRET_ACCESS_KEY,
+    aws_region: process.env.AWS_REGION,
+    aws_url: undefined,
+});
 
-function onInit(client) {
-    var commandsToRun;
+var usernames = [],
+    batchWrite = {
+        RequestItems: {
+            'Overwatch_Profiles_Queue': []
+        }
+    };
 
-    console.log('Running Profile Fetch All');
+scanForProfiles().then(function() {
+    batchWriteUsers(usernames).then(end, onError);
+}, onError);
 
-    commandsToRun = [
-        ['scan', 0, 'match', 'Stats:Profiles:*:*:global', 'count', 10000],
-        ['scan', 0, 'match', 'Stats:Profiles:*:*:us', 'count', 10000],
-        ['scan', 0, 'match', 'Stats:Profiles:*:*:eu', 'count', 10000],
-        ['scan', 0, 'match', 'Stats:Profiles:*:*:kr', 'count', 10000]
-    ];
+function scanForProfiles(lastEvaluatedKey) {
+    return new Promise(function(resolve, reject) {
+        documentClient.scan({
+            TableName: 'Overwatch_Profiles_Usernames',
+            Limit: 20000,
+            AttributesToGet: ['username']
+        }).promise().then(function(result) {
+            usernames = usernames.concat(result.Items);
 
-    client.multi(commandsToRun).execAsync().then(function(results) {
-        var accountsToFetch = [];
-
-        results.forEach(function(scanResult) {
-            scanResult[1].forEach(function(key) {
-                accountsToFetch.push(key.replace('Stats:Profiles:', ''));
-            });
-        });
-
-        client.saddAsync('Queue:Profiles', accountsToFetch).then(function(results) {
-            end(results);
-        });
+            if (result.Items.length > 0 && result.LastEvaluatedKey) {
+                scanForProfiles(result.LastEvaluatedKey).then(function(innerResult) {
+                    usernames = usernames.concat(innerResult.Items);
+                    resolve(usernames);
+                }, reject);
+            } else {
+                resolve(usernames);
+            }
+        }, reject);
     });
 }
 
 function onError(e) {
-    console.log('Error');
+    console.log('Error', e);
     end();
 }
 
@@ -42,4 +50,26 @@ function end(results) {
     var endTime = Date.now();
     console.log.apply(console, [(endTime - startTime) / 1000].concat(arguments));
     process.exit();
+}
+
+function batchWriteUsers(usernames) {
+    var promises = [];
+
+    usernames.forEach(function(user) {
+        batchWrite.RequestItems.Overwatch_Profiles_Queue.push({
+            PutRequest: {
+                Item: {
+                    username: user.username/*,
+                    timestamp: Date.now()*/
+                }
+            }
+        });
+
+        if(batchWrite.RequestItems.Overwatch_Profiles_Queue.length === 25) {
+            promises.push(documentClient.batchWrite(batchWrite).promise());
+            batchWrite.RequestItems.Overwatch_Profiles_Queue = [];
+        }
+    });
+
+    return Promise.all(promises);
 }
