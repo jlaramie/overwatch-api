@@ -35,7 +35,7 @@ function getQueue(client, tableName, lastEvaluatedKey) {
     return new Promise(function(resolve, reject) {
         client.scan({
             TableName: tableName,
-            Limit: 10,
+            Limit: 40,
             AttributesToGet: ['username'/*, 'timestamp'*/]
         }).promise().then(function(result) {
             profiles = profiles.concat(result.Items);
