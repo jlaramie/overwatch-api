@@ -69,7 +69,7 @@ var cache = {
                 } else if (doBackgroundFech && queueKey) {
                     // Queue enabled. Added to queue and return result if one exists already
                     console.log(`Adding ${cacheKey} to ${queueKey}`);
-                    client.saddAsync(queueKey, cacheKey).then(function(queueResult) {
+                    cache.set('Overwatch_Profiles_Queue', { username: cacheKey }).then(function(queueResult) {
                         globalResolve('resolve', result, resolve, callback);
                     }, function(error) {
                         globalReject('isRefreshing set error', error, reject, callback);
