@@ -136,10 +136,10 @@ module.exports = function(platform, region, tag, cb) {
 
                 if (stats.competitive.careerStats) {
                     profile.games.competitive = {
-                        wins: stats.competitive.careerStats.allHeroes.game.gamesWon,
+                        wins: stats.competitive.careerStats.allHeroes.game.gamesWon || 0,
                         lost: stats.competitive.careerStats.allHeroes.miscellaneous.gamesLost,
                         tied: stats.competitive.careerStats.allHeroes.miscellaneous.gamesTied,
-                        winPercentage: (stats.competitive.careerStats.allHeroes.game.gamesWon / stats.competitive.careerStats.allHeroes.game.gamesPlayed) * 100
+                        winPercentage: ((stats.competitive.careerStats.allHeroes.game.gamesWon || 0) / stats.competitive.careerStats.allHeroes.game.gamesPlayed) * 100
                     };
                 }
 
@@ -148,7 +148,7 @@ module.exports = function(platform, region, tag, cb) {
                     delete profile.competitive;
                 }
 
-                if(!profile.starImg) {
+                if (!profile.starImg) {
                     delete profile.starImg;
                 }
 
@@ -304,7 +304,7 @@ module.exports = function(platform, region, tag, cb) {
                         img: getHeroImage(group.id)
                     };
 
-                    if(!stats.heroDetails.img) {
+                    if (!stats.heroDetails.img) {
                         delete stats.heroDetails.img;
                     }
 
