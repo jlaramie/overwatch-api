@@ -2,9 +2,7 @@
 
 'use strict';
 
-var startTime = Date.now(),
-    db = require('../app/db/adapter/dynamodb'),
-    _ = require('underscore');
+var db = require('../app/db/adapter/dynamodb');
 
 var documentClient = db.init({
     aws_access_key_id: process.env.AWS_ACCESS_KEY_ID,
@@ -20,42 +18,44 @@ var resultItems = [],
         }
     };
 
-scanForProfiles().then(function(items) {
-    try {
-        console.log(JSON.stringify(resultItems));
-        batchDeleteProfiles(resultItems).then(end, onError);
-    } catch (e) {
-        onError(e);
-    }
-}, onError);
-
-
-function scanForProfiles(lastEvaluatedKey) {
+module.exports = function(username, startTime, endTime) {
     return new Promise(function(resolve, reject) {
-        console.log('fetching', lastEvaluatedKey);
+        scanForProfiles(username, startTime, endTime).then(function(items) {
+            try {
+                console.log(JSON.stringify(resultItems));
+                batchDeleteProfiles(resultItems).then(function() {
+                    resolve(resultItems.length);
+                }, reject);
+            } catch (e) {
+                reject();
+            }
+        }, onError);
+    });
+}
+
+
+function scanForProfiles(username, startTime, endTime, lastEvaluatedKey) {
+    return new Promise(function(resolve, reject) {
+        console.log('fetching', username, lastEvaluatedKey);
         documentClient.query({
             TableName: 'Overwatch_Profiles',
-            Limit: 3000,
             AttributesToGet: ['username', 'timestamp'],
             ScanIndexForward: false,
             ExclusiveStartKey: lastEvaluatedKey,
             KeyConditions: {
                 username: {
                     ComparisonOperator: 'EQ',
-                    // AttributeValueList: ['Tr1ckyRabb1t:psn:global']
-                        // AttributeValueList: ['rbouchoux:psn:global']
-                        AttributeValueList: ['Ballsacian1:psn:global']
-                        // AttributeValueList: ['Ballsacian1:psn:global', 'rbouchoux:psn:global', 'Tr1ckyRabb1t:psn:global']
+                    AttributeValueList: [username]
                 },
-                timestamp: {
+                timestamp: startTime && endTime ? {
                     ComparisonOperator: 'BETWEEN',
-                    AttributeValueList: [1488690000000, 1488724364684]
-                }
+                    AttributeValueList: [startTime, endTime]
+                } : undefined
             }
         }).promise().then(function(result) {
             resultItems = resultItems.concat(result.Items);
             if (result.Items.length > 0 && result.LastEvaluatedKey) {
-                scanForProfiles(result.LastEvaluatedKey).then(function(innerResult) {
+                scanForProfiles(username, startTime, endTime, result.LastEvaluatedKey).then(function(innerResult) {
                     resultItems = resultItems.concat(innerResult.Items || []);
                     resolve(resultItems);
                 }, reject);
@@ -101,16 +101,4 @@ function batchDeleteProfiles(items) {
             }, reject);
         }
     })
-}
-
-
-function onError(e) {
-    console.log(e.stack);
-    end();
-}
-
-function end() {
-    var endTime = Date.now();
-    console.log.apply(console, ['End', (endTime - startTime) / 1000].concat(arguments));
-    process.exit();
 }

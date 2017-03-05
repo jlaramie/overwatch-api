@@ -16,6 +16,7 @@ var documentClient = db.init({
 var usernames = {},
     resultItems = [];
 
+
 scanForProfiles().then(function(items) {
     try {
         items.forEach(function(item) {
@@ -36,7 +37,6 @@ function scanForProfiles(lastEvaluatedKey) {
         console.log('fetching', lastEvaluatedKey);
         documentClient.scan({
             TableName: 'Overwatch_Profiles',
-            Limit: 20000,
             AttributesToGet: ['username', 'timestamp'],
             ExclusiveStartKey: lastEvaluatedKey
         }).promise().then(function(result) {
