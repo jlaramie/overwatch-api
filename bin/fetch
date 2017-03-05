@@ -22,12 +22,16 @@ onInit(documentClient);
 function onInit(client) {
     console.log('Running Profile Fetch');
     getQueue(client, 'Overwatch_Profiles_Queue').then(function(profiles) {
-        profiles = profiles.concat([
-            { username: 'Ballsacian1:psn:global' },
-            { username: 'rbouchoux:psn:global' },
-            { username: 'Tr1ckyRabb1t:psn:global' }
-        ]);
-        console.log('processing', profiles.length);
+        if(profiles.length === 0) {
+            profiles = profiles.concat([
+                { username: 'Ballsacian1:psn:global' },
+                { username: 'BallsacianOne:psn:global' },
+                { username: 'rbouchoux:psn:global' },
+                { username: 'rbouchoux_01:psn:global' },
+                { username: 'Tr1ckyRabb1t:psn:global' }
+            ]);
+            console.log('processing', profiles.length);
+        }
         processQueue(client, 'Overwatch_Profiles_Queue', profiles).then(function(results) {
             end(results);
         }, onError);
