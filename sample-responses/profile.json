@@ -1,29 +1,33 @@
 {
-    "username": "Ballsacian1",
-    "avatar": "https://blzgdapipro-a.akamaihd.net/game/unlocks/0x02500000000006CF.png",
-    "games": {
-        "quickplay": {
-            "wins": "390"
+    "username": "Ballsacian1:psn:global",
+    "timestamp": 1488727360914,
+    "lastChecked": 1488728555961,
+    "profile": {
+        "levelFull": 463,
+        "level": 63,
+        "levelFrameImg": "https://blzgdapipro-a.akamaihd.net/game/playerlevelrewards/0x0250000000000946_Border.png",
+        "games": {
+            "quickplay": {
+                "wins": 455
+            },
+            "competitive": {
+                "wins": 12,
+                "tied": 5,
+                "lost": 20,
+                "winPercentage": 32.432432432432435
+            }
         },
+        "avatarImg": "https://blzgdapipro-a.akamaihd.net/game/unlocks/0x0250000000000EFD.png",
         "competitive": {
-            "wins": "250",
-            "lost": "213",
-            "played": "499",
-            "tied": "36",
-            "winPercentage": 50.1002004008016
-        }
-    },
-    "playtime": {
-        "quickplay": "98 hours",
-        "competitive": "110 hours"
-    },
-    "competitive": {
-        "rank": "3000",
-        "rank_img": "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-5.png"
-    },
-    "level": 29,
-    "prestige": 3,
-    "levelFull": 329,
-    "levelFrame": "https://blzgdapipro-a.akamaihd.net/game/playerlevelrewards/0x0250000000000934_Border.png",
-    "star": "https://blzgdapipro-a.akamaihd.net/game/playerlevelrewards/0x0250000000000934_Rank.png"
+            "rank": 2967,
+            "rankImg": "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-4.png"
+        },
+        "playtime": {
+            "quickplay": 417600,
+            "competitive": 28800
+        },
+        "starImg": "https://blzgdapipro-a.akamaihd.net/game/playerlevelrewards/0x0250000000000946_Rank.png",
+        "prestige": 4,
+        "username": "Ballsacian1"
+    }
 }

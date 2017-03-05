@@ -2,6 +2,34 @@
     "username": "Ballsacian1:psn:global",
     "timestamp": 1488727360914,
     "lastChecked": 1488728555961,
+    "profile": {
+        "levelFull": 463,
+        "level": 63,
+        "levelFrameImg": "https://blzgdapipro-a.akamaihd.net/game/playerlevelrewards/0x0250000000000946_Border.png",
+        "games": {
+            "quickplay": {
+                "wins": 455
+            },
+            "competitive": {
+                "wins": 12,
+                "tied": 5,
+                "lost": 20,
+                "winPercentage": 32.432432432432435
+            }
+        },
+        "avatarImg": "https://blzgdapipro-a.akamaihd.net/game/unlocks/0x0250000000000EFD.png",
+        "competitive": {
+            "rank": 2967,
+            "rankImg": "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-4.png"
+        },
+        "playtime": {
+            "quickplay": 417600,
+            "competitive": 28800
+        },
+        "starImg": "https://blzgdapipro-a.akamaihd.net/game/playerlevelrewards/0x0250000000000946_Rank.png",
+        "prestige": 4,
+        "username": "Ballsacian1"
+    },
     "stats": {
         "quickplay": {
             "featured": {
