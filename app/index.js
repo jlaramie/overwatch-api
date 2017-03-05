@@ -2,6 +2,7 @@ import index from './routes/index';
 import data from './routes/data';
 import profile from './routes/profile';
 import stats from './routes/stats';
+import lookup from './routes/lookup';
 import badRequest from './routes/badRequest';
 import dynamodb from './db/adapter/dynamodb.js';
 
@@ -17,5 +18,6 @@ export default function(app) {
     app.use('/data', data);
     app.use('/profile', profile);
     app.use('/stats', stats);
+    app.use('/lookup', lookup);
     app.use('*', badRequest);
 }
