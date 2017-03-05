@@ -25,7 +25,7 @@ function onInit(client) {
         profiles = profiles.concat([
             { username: 'Ballsacian1:psn:global' },
             { username: 'rbouchoux:psn:global' },
-            { username: 'Tr1ckRabb1t:psn:global' }
+            { username: 'Tr1ckyRabb1t:psn:global' }
         ]);
         console.log('processing', profiles.length);
         processQueue(client, 'Overwatch_Profiles_Queue', profiles).then(function(results) {
@@ -104,7 +104,7 @@ function processQueueItem(client, bucket, key) {
 
         try {
             console.log('processing queue item', key);
-            cache.getOrSet('Overwatch_Profiles', ['username', key], undefined, cacheTime, getProfile.bind(null, platform, region, tag), isNewProfile, undefined, function(e, data) {
+            cache.getOrSet('Overwatch_Profiles', ['username', username], undefined, cacheTime, getProfile.bind(null, platform, region, tag), isNewProfile, undefined, function(e, data) {
                 console.log('processed queue item', key);
                 if (e) {
                     if(e.statusCode === 404) {
