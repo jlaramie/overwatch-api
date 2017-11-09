@@ -7,7 +7,7 @@ try {
         }, function(error) {
             console.log('Stats Error: \n' + JSON.stringify(error));
         }),
-    ]).done(function() {
+    ]).then(function() {
         process.exit();
     }, function() {
         process.exit();
